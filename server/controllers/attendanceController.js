@@ -2,13 +2,15 @@ import Attendance from '../models/Attendance.js';
 
 export const clockIn = async (req, res) => {
   try {
+    // Always allow a new clock-in
+    const now = new Date();
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    const already = await Attendance.findOne({ user: req.user._id, date: today });
-    if (already && already.clockIn) {
-      return res.status(400).json({ message: 'Already clocked in today' });
-    }
-    const attendance = new Attendance({ user: req.user._id, clockIn: new Date(), date: today });
+    const attendance = new Attendance({
+      user: req.user._id,
+      clockIn: now,
+      date: today,
+    });
     await attendance.save();
     res.status(201).json({ message: 'Clocked in', attendance });
   } catch (error) {
@@ -18,11 +20,13 @@ export const clockIn = async (req, res) => {
 
 export const clockOut = async (req, res) => {
   try {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const attendance = await Attendance.findOne({ user: req.user._id, date: today });
-    if (!attendance || attendance.clockOut) {
-      return res.status(400).json({ message: 'Not clocked in or already clocked out' });
+    // Find the most recent clock-in without a clock-out for this user
+    const attendance = await Attendance.findOne({
+      user: req.user._id,
+      clockOut: null,
+    }).sort({ clockIn: -1 });
+    if (!attendance) {
+      return res.status(400).json({ message: 'No active clock-in found' });
     }
     attendance.clockOut = new Date();
     await attendance.save();
