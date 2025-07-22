@@ -35,32 +35,34 @@ function LayoutWithSidebar() {
     setRole(user.role);
   }, []);
   return (
-    <div className="min-h-screen bg-gray-50 flex">
-      <aside className="w-56 bg-white shadow-lg flex flex-col py-8 px-4">
-        <div className="text-2xl font-bold text-blue-700 mb-8">CRM</div>
+    <div className="min-h-screen bg-gradient-to-br from-[#e0e7ff] via-[#f3e8ff] to-[#fff] flex">
+      <aside className="w-60 bg-white/80 backdrop-blur-md shadow-2xl flex flex-col py-10 px-4 animate-fade-in-left rounded-tr-3xl rounded-br-3xl">
+        <div className="text-3xl font-extrabold text-blue-700 mb-10 tracking-tight drop-shadow animate-fade-in-down transition-transform duration-300 hover:scale-105 select-none cursor-pointer">
+          <span className="inline-block animate-pulse">CRM</span>
+        </div>
         <nav className="flex flex-col gap-2">
-          <Link to="/dashboard" className="hover:bg-blue-50 rounded px-3 py-2">Dashboard</Link>
-          <Link to="/leads" className="hover:bg-blue-50 rounded px-3 py-2">Leads</Link>
-          <Link to="/attendance" className="hover:bg-blue-50 rounded px-3 py-2">Attendance</Link>
+          <Link to="/dashboard" className={`px-4 py-2 rounded-lg font-semibold transition-all duration-200 hover:bg-blue-100 hover:text-blue-700 hover:scale-105 ${location.pathname === '/dashboard' ? 'bg-blue-200 text-blue-800 shadow' : 'text-gray-700'}`}>Dashboard</Link>
+          <Link to="/leads" className={`px-4 py-2 rounded-lg font-semibold transition-all duration-200 hover:bg-purple-100 hover:text-purple-700 hover:scale-105 ${location.pathname === '/leads' ? 'bg-purple-200 text-purple-800 shadow' : 'text-gray-700'}`}>Leads</Link>
+          <Link to="/attendance" className={`px-4 py-2 rounded-lg font-semibold transition-all duration-200 hover:bg-green-100 hover:text-green-700 hover:scale-105 ${location.pathname === '/attendance' ? 'bg-green-200 text-green-800 shadow' : 'text-gray-700'}`}>Attendance</Link>
           {role === 'admin' && (
             <div>
               <button
-                className="w-full text-left hover:bg-blue-50 rounded px-3 py-2 flex items-center justify-between"
+                className="w-full text-left px-4 py-2 rounded-lg font-semibold transition-all duration-200 hover:bg-yellow-100 hover:text-yellow-700 hover:scale-105 flex items-center justify-between"
                 onClick={() => setReportsOpen((open) => !open)}
               >
                 Reports
-                <span>{reportsOpen ? '▲' : '▼'}</span>
+                <span className="ml-2">{reportsOpen ? '▲' : '▼'}</span>
               </button>
               {reportsOpen && (
-                <div className="ml-4 flex flex-col gap-1">
-                  <Link to="/reports/attendance" className={`hover:bg-blue-100 rounded px-3 py-1 ${location.pathname === '/reports/attendance' ? 'bg-blue-100' : ''}`}>Attendance</Link>
-                  <Link to="/reports/leads" className={`hover:bg-blue-100 rounded px-3 py-1 ${location.pathname === '/reports/leads' ? 'bg-blue-100' : ''}`}>Leads</Link>
-                  <Link to="/reports/sales" className={`hover:bg-blue-100 rounded px-3 py-1 ${location.pathname === '/reports/sales' ? 'bg-blue-100' : ''}`}>Sales</Link>
+                <div className="ml-4 flex flex-col gap-1 animate-fade-in-down">
+                  <Link to="/reports/attendance" className={`px-4 py-1 rounded-lg font-semibold transition-all duration-200 hover:bg-blue-100 hover:text-blue-700 ${location.pathname === '/reports/attendance' ? 'bg-blue-200 text-blue-800 shadow' : 'text-gray-700'}`}>Attendance</Link>
+                  <Link to="/reports/leads" className={`px-4 py-1 rounded-lg font-semibold transition-all duration-200 hover:bg-purple-100 hover:text-purple-700 ${location.pathname === '/reports/leads' ? 'bg-purple-200 text-purple-800 shadow' : 'text-gray-700'}`}>Leads</Link>
+                  <Link to="/reports/sales" className={`px-4 py-1 rounded-lg font-semibold transition-all duration-200 hover:bg-yellow-100 hover:text-yellow-700 ${location.pathname === '/reports/sales' ? 'bg-yellow-200 text-yellow-800 shadow' : 'text-gray-700'}`}>Sales</Link>
                 </div>
               )}
             </div>
           )}
-          {role === 'admin' && <Link to="/admin/register" className="hover:bg-blue-50 rounded px-3 py-2">Admin Register</Link>}
+          {role === 'admin' && <Link to="/admin/register" className={`px-4 py-2 rounded-lg font-semibold transition-all duration-200 hover:bg-pink-100 hover:text-pink-700 hover:scale-105 ${location.pathname === '/admin/register' ? 'bg-pink-200 text-pink-800 shadow' : 'text-gray-700'}`}>Admin Register</Link>}
         </nav>
       </aside>
       <main className="flex-1">

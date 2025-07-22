@@ -152,114 +152,116 @@ export default function AttendancePage() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto mt-12 p-8 bg-white rounded-xl shadow-lg">
-      <h1 className="text-3xl font-bold mb-6 text-blue-700">Attendance</h1>
-      <div className="mb-6">
-        <h2 className="text-xl font-semibold mb-2">Today's Status</h2>
-        {todaysRecords.length === 0 ? (
-          <div>Not clocked in today.</div>
-        ) : (
-          <div className="overflow-x-auto mb-2">
-            <table className="min-w-full border text-sm">
-              <thead>
-                <tr className="bg-blue-100">
-                  {currentUser?.role === 'admin' && !userFilter && <th className="py-2 px-3 border">Employee</th>}
-                  <th className="py-2 px-3 border">Clock In</th>
-                  <th className="py-2 px-3 border">Clock Out</th>
-                </tr>
-              </thead>
-              <tbody>
-                {todaysRecords.map(r => (
-                  <tr key={r._id} className="even:bg-gray-50">
-                    {currentUser?.role === 'admin' && !userFilter && <td className="py-1 px-3 border">{r.user?.name || '-'}</td>}
-                    <td className="py-1 px-3 border">{r.clockIn ? new Date(r.clockIn).toLocaleTimeString() : '-'}</td>
-                    <td className="py-1 px-3 border">{r.clockOut ? new Date(r.clockOut).toLocaleTimeString() : '-'}</td>
+    <div className="min-h-screen w-full flex flex-col items-center justify-start bg-gradient-to-br from-[#e0e7ff] via-[#f3e8ff] to-[#fff]">
+      <div className="max-w-4xl w-full mt-12 p-8 bg-white/80 rounded-xl shadow-lg backdrop-blur-md">
+        <h1 className="text-3xl font-bold mb-6 text-gray-800 drop-shadow">Attendance</h1>
+        <div className="mb-6">
+          <h2 className="text-xl font-semibold mb-2">Today's Status</h2>
+          {todaysRecords.length === 0 ? (
+            <div>Not clocked in today.</div>
+          ) : (
+            <div className="overflow-x-auto mb-2">
+              <table className="min-w-full border text-sm">
+                <thead>
+                  <tr className="bg-blue-100">
+                    {currentUser?.role === 'admin' && !userFilter && <th className="py-2 px-3 border">Employee</th>}
+                    <th className="py-2 px-3 border">Clock In</th>
+                    <th className="py-2 px-3 border">Clock Out</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {todaysRecords.map(r => (
+                    <tr key={r._id} className="even:bg-gray-50">
+                      {currentUser?.role === 'admin' && !userFilter && <td className="py-1 px-3 border">{r.user?.name || '-'}</td>}
+                      <td className="py-1 px-3 border">{r.clockIn ? new Date(r.clockIn).toLocaleTimeString() : '-'}</td>
+                      <td className="py-1 px-3 border">{r.clockOut ? new Date(r.clockOut).toLocaleTimeString() : '-'}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+          <div className="flex gap-4 mt-4">
+            {canClockIn && <button onClick={handleClockIn} className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">Clock In</button>}
+            {canClockOut && <button onClick={handleClockOut} className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">Clock Out</button>}
           </div>
-        )}
-        <div className="flex gap-4 mt-4">
-          {canClockIn && <button onClick={handleClockIn} className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">Clock In</button>}
-          {canClockOut && <button onClick={handleClockOut} className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">Clock Out</button>}
         </div>
-      </div>
-      {/* Grouped table for agent or admin viewing a single user */}
-      {(currentUser?.role !== 'admin' || (currentUser?.role === 'admin' && userFilter)) ? (
-        <div>
-          <h2 className="text-xl font-semibold mb-2">Attendance History</h2>
-          <div className="overflow-x-auto">
-            <table className="min-w-full border text-sm">
-              <thead>
-                <tr className="bg-blue-100">
-                  <th className="py-2 px-3 border">Date</th>
-                  {Array.from({ length: maxPairs }).map((_, i) => [
-                    <th key={`in${i}`} className="py-2 px-3 border">Clock In {i + 1}</th>,
-                    <th key={`out${i}`} className="py-2 px-3 border">Clock Out {i + 1}</th>
-                  ])}
-                </tr>
-              </thead>
-              <tbody>
-                {Object.entries(grouped).length === 0 ? (
-                  <tr><td colSpan={1 + maxPairs * 2} className="text-center py-4">No records found.</td></tr>
-                ) : Object.entries(grouped).map(([date, recs]) => (
-                  <tr key={date} className="even:bg-gray-50">
-                    <td className="py-1 px-3 border">{date}</td>
+        {/* Grouped table for agent or admin viewing a single user */}
+        {(currentUser?.role !== 'admin' || (currentUser?.role === 'admin' && userFilter)) ? (
+          <div>
+            <h2 className="text-xl font-semibold mb-2">Attendance History</h2>
+            <div className="overflow-x-auto">
+              <table className="min-w-full border text-sm">
+                <thead>
+                  <tr className="bg-blue-100">
+                    <th className="py-2 px-3 border">Date</th>
                     {Array.from({ length: maxPairs }).map((_, i) => [
-                      <td key={`in${i}`} className="py-1 px-3 border">{recs[i]?.clockIn ? new Date(recs[i].clockIn).toLocaleTimeString() : '-'}</td>,
-                      <td key={`out${i}`} className="py-1 px-3 border">{recs[i]?.clockOut ? new Date(recs[i].clockOut).toLocaleTimeString() : '-'}</td>
+                      <th key={`in${i}`} className="py-2 px-3 border">Clock In {i + 1}</th>,
+                      <th key={`out${i}`} className="py-2 px-3 border">Clock Out {i + 1}</th>
                     ])}
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {Object.entries(grouped).length === 0 ? (
+                    <tr><td colSpan={1 + maxPairs * 2} className="text-center py-4">No records found.</td></tr>
+                  ) : Object.entries(grouped).map(([date, recs]) => (
+                    <tr key={date} className="even:bg-gray-50">
+                      <td className="py-1 px-3 border">{date}</td>
+                      {Array.from({ length: maxPairs }).map((_, i) => [
+                        <td key={`in${i}`} className="py-1 px-3 border">{recs[i]?.clockIn ? new Date(recs[i].clockIn).toLocaleTimeString() : '-'}</td>,
+                        <td key={`out${i}`} className="py-1 px-3 border">{recs[i]?.clockOut ? new Date(recs[i].clockOut).toLocaleTimeString() : '-'}</td>
+                      ])}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
-      ) : (
-        <div>
-          <h2 className="text-xl font-semibold mb-2">All Attendance Records</h2>
-          <div className="mb-4 flex flex-wrap gap-4 items-center">
-            <div className="font-semibold">Summary:</div>
-            <div>Total Records: {summary.total}</div>
-            <div>Clocked In Today: {summary.clockedInToday}</div>
-            <select value={userFilter} onChange={e => setUserFilter(e.target.value)} className="input input-bordered px-2 py-1 border rounded">
-              <option value="">All Employees</option>
-              {users.map(u => <option key={u._id} value={u._id}>{u.name}</option>)}
-            </select>
-            <input type="date" value={dateFilter} onChange={e => setDateFilter(e.target.value)} className="input input-bordered px-2 py-1 border rounded" />
-            <button onClick={() => { setUserFilter(''); setDateFilter(''); }} className="text-blue-600 hover:underline text-sm">Clear Filters</button>
-          </div>
-          <div className="overflow-x-auto">
-            <table className="min-w-full border text-sm">
-              <thead>
-                <tr className="bg-blue-100">
-                  <th className="py-2 px-3 border">Employee</th>
-                  <th className="py-2 px-3 border">Date</th>
-                  <th className="py-2 px-3 border">Clock In</th>
-                  <th className="py-2 px-3 border">Clock Out</th>
-                  <th className="py-2 px-3 border">Delete</th>
-                </tr>
-              </thead>
-              <tbody>
-                {records.length === 0 ? (
-                  <tr><td colSpan={5} className="text-center py-4">No records found.</td></tr>
-                ) : records.map(r => (
-                  <tr key={r._id} className="even:bg-gray-50">
-                    <td className="py-1 px-3 border">{r.user?.name || '-'}</td>
-                    <td className="py-1 px-3 border">{new Date(r.date).toLocaleDateString()}</td>
-                    <td className="py-1 px-3 border">{r.clockIn ? new Date(r.clockIn).toLocaleTimeString() : '-'}</td>
-                    <td className="py-1 px-3 border">{r.clockOut ? new Date(r.clockOut).toLocaleTimeString() : '-'}</td>
-                    <td className="py-1 px-3 border">
-                      <button onClick={() => handleDelete(r._id)} className="text-red-600 hover:underline ml-2">Delete</button>
-                    </td>
+        ) : (
+          <div>
+            <h2 className="text-xl font-semibold mb-2">All Attendance Records</h2>
+            <div className="mb-4 flex flex-wrap gap-4 items-center">
+              <div className="font-semibold">Summary:</div>
+              <div>Total Records: {summary.total}</div>
+              <div>Clocked In Today: {summary.clockedInToday}</div>
+              <select value={userFilter} onChange={e => setUserFilter(e.target.value)} className="input input-bordered px-2 py-1 border rounded">
+                <option value="">All Employees</option>
+                {users.map(u => <option key={u._id} value={u._id}>{u.name}</option>)}
+              </select>
+              <input type="date" value={dateFilter} onChange={e => setDateFilter(e.target.value)} className="input input-bordered px-2 py-1 border rounded" />
+              <button onClick={() => { setUserFilter(''); setDateFilter(''); }} className="text-blue-600 hover:underline text-sm">Clear Filters</button>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="min-w-full border text-sm">
+                <thead>
+                  <tr className="bg-blue-100">
+                    <th className="py-2 px-3 border">Employee</th>
+                    <th className="py-2 px-3 border">Date</th>
+                    <th className="py-2 px-3 border">Clock In</th>
+                    <th className="py-2 px-3 border">Clock Out</th>
+                    <th className="py-2 px-3 border">Delete</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {records.length === 0 ? (
+                    <tr><td colSpan={5} className="text-center py-4">No records found.</td></tr>
+                  ) : records.map(r => (
+                    <tr key={r._id} className="even:bg-gray-50">
+                      <td className="py-1 px-3 border">{r.user?.name || '-'}</td>
+                      <td className="py-1 px-3 border">{new Date(r.date).toLocaleDateString()}</td>
+                      <td className="py-1 px-3 border">{r.clockIn ? new Date(r.clockIn).toLocaleTimeString() : '-'}</td>
+                      <td className="py-1 px-3 border">{r.clockOut ? new Date(r.clockOut).toLocaleTimeString() : '-'}</td>
+                      <td className="py-1 px-3 border">
+                        <button onClick={() => handleDelete(r._id)} className="text-red-600 hover:underline ml-2">Delete</button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 } 
