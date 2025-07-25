@@ -15,6 +15,8 @@ import { useEffect, useState } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { io } from 'socket.io-client';
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 
 function RequireAuth() {
   const token = localStorage.getItem('token');
@@ -83,7 +85,7 @@ function App() {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     if (!user._id) return;
     // Connect to Socket.IO backend
-    const socket = io('http://localhost:5001', {
+    const socket = io(BASE_URL, {
       auth: { token },
       transports: ['websocket'],
     });

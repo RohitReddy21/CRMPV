@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { getCurrentUser, updateCurrentUser, getAllUsers, getUserStats, getLeads, getAttendance } from '../api';
 import { FaUsers, FaUserCheck, FaClipboardList, FaChartBar, FaUserTie } from 'react-icons/fa';
-import logo from '../assets/primeverse-logo.png';
 import { PieChart, Pie, Cell, Tooltip, BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Legend, CartesianGrid } from 'recharts';
 import { Link } from 'react-router-dom';
 
@@ -56,31 +55,6 @@ export default function Dashboard() {
     { name: 'Website', value: leads.filter(l => l.platform === 'website').length, color: platformColors.website },
   ];
 
-  // --- Lead Status Pie Chart ---
-  const statusColors = {
-    new: '#a3e635',
-    contacted: '#fbbf24',
-    inprogress: '#818cf8',
-    converted: '#22d3ee',
-    lost: '#f87171',
-  };
-  const leadStatusData = [
-    { name: 'New', value: leads.filter(l => l.status === 'new').length, color: statusColors.new },
-    { name: 'Contacted', value: leads.filter(l => l.status === 'contacted').length, color: statusColors.contacted },
-    { name: 'In Progress', value: leads.filter(l => l.status === 'inprogress').length, color: statusColors.inprogress },
-    { name: 'Converted', value: leads.filter(l => l.status === 'converted').length, color: statusColors.converted },
-    { name: 'Lost', value: leads.filter(l => l.status === 'lost').length, color: statusColors.lost },
-  ];
-
-  // --- Sales Progress Bar Chart ---
-  const salesBarData = [
-    { status: 'New', value: leads.filter(l => l.status === 'new').length },
-    { status: 'Contacted', value: leads.filter(l => l.status === 'contacted').length },
-    { status: 'In Progress', value: leads.filter(l => l.status === 'inprogress').length },
-    { status: 'Converted', value: leads.filter(l => l.status === 'converted').length },
-    { status: 'Lost', value: leads.filter(l => l.status === 'lost').length },
-  ];
-
   // --- Attendance Summary ---
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -108,37 +82,31 @@ export default function Dashboard() {
   if (!user) return <div className="p-8 text-center">Loading...</div>;
 
   return (
-    <div className="min-h-screen w-full flex bg-[#0a2342]">
-      {/* Sidebar */}
-      
-      {/* Main Content */}
-      <main className="flex-1 min-h-screen bg-[#f7fafd] flex flex-col items-center">
-        <div className="max-w-6xl w-full mt-12 p-8 bg-white rounded-xl shadow-lg">
-          <div className="flex items-center justify-center mb-10 animate-fade-in-down">
-            <span className="text-4xl font-extrabold text-[#0a2342] tracking-tight select-none">Dashboard</span>
-          </div>
+    <div className="min-h-screen w-full flex flex-col items-center justify-start bg-gradient-to-br from-[#e0e7ff] via-[#f3e8ff] to-[#fff]">
+      <div className="max-w-6xl w-full mt-12 p-8 bg-white/80 rounded-xl shadow-lg backdrop-blur-md">
+        <h1 className="text-4xl font-extrabold mb-10 text-gray-800 drop-shadow-lg tracking-tight animate-fade-in-down">Dashboard</h1>
         {/* Overview Cards */}
         {user.role === 'admin' && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-            <div className="flex flex-col items-center bg-gradient-to-br from-[#2ec4f1] to-white rounded-2xl shadow-lg p-6 hover:scale-105 transition-all duration-200 animate-fade-in-up">
-              <FaUsers className="text-4xl text-[#0a2342] mb-2" />
-              <div className="text-2xl font-bold text-[#0a2342]">{stats ? stats.total : '--'}</div>
-              <div className="text-[#4b5e6b]">Total Users</div>
+            <div className="flex flex-col items-center bg-gradient-to-br from-blue-100 to-white rounded-2xl shadow-lg p-6 hover:scale-105 transition-all duration-200 animate-fade-in-up">
+              <FaUsers className="text-4xl text-blue-500 mb-2" />
+              <div className="text-2xl font-bold text-gray-800">{stats ? stats.total : '--'}</div>
+              <div className="text-gray-600">Total Users</div>
             </div>
-            <div className="flex flex-col items-center bg-gradient-to-br from-[#ffd600] to-white rounded-2xl shadow-lg p-6 hover:scale-105 transition-all duration-200 animate-fade-in-up">
-              <FaClipboardList className="text-4xl text-[#ffd600] mb-2" />
-              <div className="text-2xl font-bold text-[#0a2342]">{leadCount}</div>
-              <div className="text-[#4b5e6b]">Total Leads</div>
+            <div className="flex flex-col items-center bg-gradient-to-br from-purple-100 to-white rounded-2xl shadow-lg p-6 hover:scale-105 transition-all duration-200 animate-fade-in-up">
+              <FaClipboardList className="text-4xl text-purple-500 mb-2" />
+              <div className="text-2xl font-bold text-gray-800">{leadCount}</div>
+              <div className="text-gray-600">Total Leads</div>
             </div>
-            <div className="flex flex-col items-center bg-gradient-to-br from-[#2ec4f1] to-white rounded-2xl shadow-lg p-6 hover:scale-105 transition-all duration-200 animate-fade-in-up">
-              <FaUserCheck className="text-4xl text-[#2ec4f1] mb-2" />
-              <div className="text-2xl font-bold text-[#0a2342]">{attendanceCount}</div>
-              <div className="text-[#4b5e6b]">Attendance Records</div>
+            <div className="flex flex-col items-center bg-gradient-to-br from-green-100 to-white rounded-2xl shadow-lg p-6 hover:scale-105 transition-all duration-200 animate-fade-in-up">
+              <FaUserCheck className="text-4xl text-green-500 mb-2" />
+              <div className="text-2xl font-bold text-gray-800">{attendanceCount}</div>
+              <div className="text-gray-600">Attendance Records</div>
             </div>
-            <div className="flex flex-col items-center bg-gradient-to-br from-[#0a2342] to-white rounded-2xl shadow-lg p-6 hover:scale-105 transition-all duration-200 animate-fade-in-up">
-              <FaChartBar className="text-4xl text-[#0a2342] mb-2" />
-              <div className="text-2xl font-bold text-[#ffd600]">4</div>
-              <div className="text-[#4b5e6b]">Reports</div>
+            <div className="flex flex-col items-center bg-gradient-to-br from-yellow-100 to-white rounded-2xl shadow-lg p-6 hover:scale-105 transition-all duration-200 animate-fade-in-up">
+              <FaChartBar className="text-4xl text-yellow-500 mb-2" />
+              <div className="text-2xl font-bold text-gray-800">4</div>
+              <div className="text-gray-600">Reports</div>
             </div>
           </div>
         )}
@@ -146,7 +114,7 @@ export default function Dashboard() {
         <div className="flex flex-wrap gap-4 mb-10 justify-center animate-fade-in-up">
           <Link to="/leads" className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg shadow font-bold transition-all duration-150">Go to Leads</Link>
           <Link to="/attendance" className="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg shadow font-bold transition-all duration-150">Go to Attendance</Link>
-          <Link to="/reports/sales" className="bg-purple-500 hover:bg-purple-600 text-white px-6 py-2 rounded-lg shadow font-bold transition-all duration-150">Go to Sales</Link>
+          <Link to="/reports" className="bg-purple-500 hover:bg-purple-600 text-white px-6 py-2 rounded-lg shadow font-bold transition-all duration-150">Go to Reports</Link>
         </div>
         {/* Main Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -176,24 +144,12 @@ export default function Dashboard() {
           </div>
           {/* Leads Breakdown Pie Chart */}
           <div className="bg-white/90 rounded-2xl shadow-lg p-6 animate-fade-in-up flex flex-col items-center">
-            <h2 className="text-xl font-bold mb-4 text-gray-800">Leads Breakdown by Platform</h2>
-            <ResponsiveContainer width="100%" height={180}>
+            <h2 className="text-xl font-bold mb-4 text-gray-800">Leads Breakdown</h2>
+            <ResponsiveContainer width="100%" height={220}>
               <PieChart>
-                <Pie data={leadsByPlatform} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={60} label>
+                <Pie data={leadsByPlatform} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={70} label>
                   {leadsByPlatform.map((entry, idx) => (
-                    <Cell key={`cell-platform-${idx}`} fill={entry.color} />
-                  ))}
-                </Pie>
-                <Tooltip />
-                <Legend />
-              </PieChart>
-            </ResponsiveContainer>
-            <h2 className="text-xl font-bold mb-4 text-gray-800 mt-8">Leads Breakdown by Status</h2>
-            <ResponsiveContainer width="100%" height={180}>
-              <PieChart>
-                <Pie data={leadStatusData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={60} label>
-                  {leadStatusData.map((entry, idx) => (
-                    <Cell key={`cell-status-${idx}`} fill={entry.color} />
+                    <Cell key={`cell-${idx}`} fill={entry.color} />
                   ))}
                 </Pie>
                 <Tooltip />
@@ -238,20 +194,6 @@ export default function Dashboard() {
               </BarChart>
             </ResponsiveContainer>
           </div>
-        </div>
-        {/* Sales Status Summary (Bar Chart) */}
-        <div className="bg-white/90 rounded-2xl shadow-lg p-6 animate-fade-in-up flex flex-col items-center">
-          <h2 className="text-xl font-bold mb-4 text-gray-800">Sales Progress</h2>
-          <ResponsiveContainer width="100%" height={220}>
-            <BarChart data={salesBarData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="status" />
-              <YAxis allowDecimals={false} />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="value" fill="#818cf8" name="Leads" />
-            </BarChart>
-          </ResponsiveContainer>
         </div>
         {/* Profile Section */}
         <div className="mb-6">
@@ -315,8 +257,7 @@ export default function Dashboard() {
             </div>
           </>
         )}
-        </div>
-      </main>
+      </div>
     </div>
   );
-}
+} 
