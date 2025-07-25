@@ -21,6 +21,11 @@ function decrypt(text) {
 }
 import crypto from 'crypto';
 import express from 'express';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cors from 'cors';
@@ -33,7 +38,6 @@ import http from 'http';
 import { Server as SocketIOServer } from 'socket.io';
 import Message from './models/Message.js';
 import Group from './models/Group.js';
-import path from 'path';
 
 // Load environment variables
 dotenv.config();
