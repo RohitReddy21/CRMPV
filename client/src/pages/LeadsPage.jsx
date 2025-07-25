@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import { io } from 'socket.io-client';
 import { FaEdit, FaTimes } from 'react-icons/fa';
 import * as XLSX from 'xlsx';
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const platforms = [
   { value: '', label: 'All Platforms' },
@@ -14,7 +15,7 @@ const platforms = [
 ];
 
 const statuses = [
-  'new', 'contacted', 'inprogress', 'converted', 'lost'
+  'new', 'contacted', 'converted', 'lost'
 ];
 
 export default function LeadsPage() {
@@ -54,7 +55,7 @@ export default function LeadsPage() {
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     if (!user._id) return;
-    const socket = io('http://localhost:5000', {
+    const socket = io(BASE_URL, {
       transports: ['websocket'],
     });
     socket.emit('identify', user._id);

@@ -3,7 +3,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import { io } from 'socket.io-client';
 import axios from 'axios';
 import CryptoJS from 'crypto-js';
-const SOCKET_URL = 'http://localhost:5001';
+// const SOCKET_URL = '';
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 
 const ENCRYPTION_KEY = '12345678901234567890123456789012'; // Replace with your actual key, keep it secure
 
@@ -87,7 +89,7 @@ const ChatPage = ({ currentUser }) => {
   };
 
   useEffect(() => {
-    socketRef.current = io(SOCKET_URL);
+    socketRef.current = io(BASE_URL || 'http://localhost:5001', { transports: ['websocket'] });
     socketRef.current.emit('identify', currentUser._id);
     socketRef.current.on('chatMessage', (msg) => {
       if (

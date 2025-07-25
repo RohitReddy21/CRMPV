@@ -157,3 +157,14 @@ export async function deleteAttendance(token, id) {
   });
   return handleApiResponse(response);
 }
+export async function getAttendanceReport(token, range, month, year) {
+  const params = [];
+  if (range) params.push(`range=${range}`);
+  if (month) params.push(`month=${month}`);
+  if (year) params.push(`year=${year}`);
+  const url = `${BASE_URL}/api/reports/attendance${params.length ? '?' + params.join('&') : ''}`;
+  const response = await fetch(url, {
+    headers: { 'Authorization': `Bearer ${token}` }
+  });
+  return handleApiResponse(response);
+}
