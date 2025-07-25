@@ -33,7 +33,7 @@ import authRoutes from './routes/authRoutes.js';
 import leadsRoutes from './routes/leadsRoutes.js';
 import attendanceRoutes from './routes/attendanceRoutes.js';
 import reportsRoutes from './routes/reportsRoutes.js';
-import chatRoutes from './routes/Chat.js';
+import chatRoutes from './routes/chatmsg.js';
 import http from 'http';
 import { Server as SocketIOServer } from 'socket.io';
 import Message from './models/Message.js';
