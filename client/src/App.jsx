@@ -1,3 +1,4 @@
+import ChatPage from './pages/ChatPage';
 import { BrowserRouter, Routes, Route, Navigate, Link, Outlet, useLocation } from 'react-router-dom';
 import RegisterPage from './pages/RegisterPage';
 import LoginPage from './pages/LoginPage';
@@ -9,6 +10,7 @@ import ReportsPage from './pages/ReportsPage';
 import AttendanceReport from './pages/AttendanceReport';
 import LeadsReport from './pages/LeadsReport';
 import SalesReport from './pages/SalesReport';
+// import SalesPage from './pages/SalesPage';
 import { useEffect, useState } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -44,6 +46,7 @@ function LayoutWithSidebar() {
           <Link to="/dashboard" className={`px-4 py-2 rounded-lg font-semibold transition-all duration-200 hover:bg-blue-100 hover:text-blue-700 hover:scale-105 ${location.pathname === '/dashboard' ? 'bg-blue-200 text-blue-800 shadow' : 'text-gray-700'}`}>Dashboard</Link>
           <Link to="/leads" className={`px-4 py-2 rounded-lg font-semibold transition-all duration-200 hover:bg-purple-100 hover:text-purple-700 hover:scale-105 ${location.pathname === '/leads' ? 'bg-purple-200 text-purple-800 shadow' : 'text-gray-700'}`}>Leads</Link>
           <Link to="/attendance" className={`px-4 py-2 rounded-lg font-semibold transition-all duration-200 hover:bg-green-100 hover:text-green-700 hover:scale-105 ${location.pathname === '/attendance' ? 'bg-green-200 text-green-800 shadow' : 'text-gray-700'}`}>Attendance</Link>
+          <Link to="/chat" className={`px-4 py-2 rounded-lg font-semibold transition-all duration-200 hover:bg-cyan-100 hover:text-cyan-700 hover:scale-105 ${location.pathname === '/chat' ? 'bg-cyan-200 text-cyan-800 shadow' : 'text-gray-700'}`}>Chat</Link>
           {role === 'admin' && (
             <div>
               <button
@@ -97,6 +100,7 @@ function App() {
     };
   }, []);
 
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
   return (
     <BrowserRouter>
       <ToastContainer position="top-right" autoClose={3000} />
@@ -109,6 +113,8 @@ function App() {
             <Route path="/leads" element={<LeadsPage />} />
             <Route path="/attendance" element={<AttendancePage />} />
             <Route path="/admin/register" element={<AdminRegisterPage />} />
+            <Route path="/chat" element={<ChatPage currentUser={user} />} />
+            {/* <Route path="/sales" element={<SalesPage />} /> */}
           </Route>
           <Route element={<RequireAdmin />}>
             <Route path="/reports" element={<ReportsPage />}>
