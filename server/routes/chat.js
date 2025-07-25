@@ -1,9 +1,8 @@
-
-
 import express from 'express';
 import Message from '../models/Message.js';
 import Group from '../models/Group.js';
 import authMiddleware from '../middleware/authMiddleware.js';
+// import chatRoutes from './routes/chat.js';
 
 const router = express.Router();
 
