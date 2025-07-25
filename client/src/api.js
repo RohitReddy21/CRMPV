@@ -1,34 +1,38 @@
-// API helper for authentication
+// api.js
+
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+// Helper for API response
 export async function handleApiResponse(response) {
-  if (response.status === 304) {
-    return null;
-  }
+  if (response.status === 304) return null;
+
   if (!response.ok) {
-    // Handle 401 Unauthorized: clear token and redirect to login
     if (response.status === 401) {
       localStorage.removeItem('token');
       window.location.href = '/login';
     }
+
     let errorText;
     try {
       errorText = await response.text();
-      // Try to parse JSON error message
-      let errorJson;
       try {
-        errorJson = JSON.parse(errorText);
+        const errorJson = JSON.parse(errorText);
+        if (errorJson?.message) {
+          throw new Error(errorJson.message);
+        }
       } catch {}
-      if (errorJson && errorJson.message) {
-        throw new Error(errorJson.message);
-      }
     } catch {}
+
     console.error('HTTP error! status:', response.status, 'Response:', errorText);
     throw new Error('HTTP error! status: ' + response.status + (errorText ? ' Response: ' + errorText : ''));
   }
+
   return response.json();
 }
 
+// Authentication
 export async function registerUser({ name, email, password, role }) {
-  const response = await fetch('http://localhost:5001/api/auth/register', {
+  const response = await fetch(`${BASE_URL}/api/auth/register`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ name, email, password, role }),
@@ -37,7 +41,7 @@ export async function registerUser({ name, email, password, role }) {
 }
 
 export async function loginUser({ email, password }) {
-  const response = await fetch('http://localhost:5001/api/auth/login', {
+  const response = await fetch(`${BASE_URL}/api/auth/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, password }),
@@ -46,14 +50,14 @@ export async function loginUser({ email, password }) {
 }
 
 export async function getCurrentUser(token) {
-  const response = await fetch('http://localhost:5001/api/auth/me', {
+  const response = await fetch(`${BASE_URL}/api/auth/me`, {
     headers: { 'Authorization': `Bearer ${token}` },
   });
   return handleApiResponse(response);
 }
 
 export async function updateCurrentUser(token, updates) {
-  const response = await fetch('http://localhost:5001/api/auth/me', {
+  const response = await fetch(`${BASE_URL}/api/auth/me`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
     body: JSON.stringify(updates),
@@ -62,21 +66,21 @@ export async function updateCurrentUser(token, updates) {
 }
 
 export async function getAllUsers(token) {
-  const response = await fetch('http://localhost:5001/api/auth/users', {
+  const response = await fetch(`${BASE_URL}/api/auth/users`, {
     headers: { 'Authorization': `Bearer ${token}` },
   });
   return handleApiResponse(response);
 }
 
 export async function getUserStats(token) {
-  const response = await fetch('http://localhost:5001/api/auth/stats', {
+  const response = await fetch(`${BASE_URL}/api/auth/stats`, {
     headers: { 'Authorization': `Bearer ${token}` },
   });
   return handleApiResponse(response);
 }
 
 export async function fetchAllUsers(token) {
-  const response = await fetch('http://localhost:5001/api/auth/users', {
+  const response = await fetch(`${BASE_URL}/api/auth/users`, {
     headers: { 'Authorization': `Bearer ${token}` },
   });
   return response.ok ? response.json() : [];
@@ -84,7 +88,7 @@ export async function fetchAllUsers(token) {
 
 // Leads
 export async function addLead(token, lead) {
-  const response = await fetch('http://localhost:5001/api/leads', {
+  const response = await fetch(`${BASE_URL}/api/leads`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
     body: JSON.stringify(lead),
@@ -93,7 +97,7 @@ export async function addLead(token, lead) {
 }
 
 export async function getLeads(token, platform) {
-  const url = platform ? `http://localhost:5001/api/leads?platform=${platform}` : 'http://localhost:5001/api/leads';
+  const url = platform ? `${BASE_URL}/api/leads?platform=${platform}` : `${BASE_URL}/api/leads`;
   const response = await fetch(url, {
     headers: { 'Authorization': `Bearer ${token}` },
   });
@@ -101,7 +105,7 @@ export async function getLeads(token, platform) {
 }
 
 export async function updateLead(token, id, updates) {
-  const response = await fetch(`http://localhost:5001/api/leads/${id}`, {
+  const response = await fetch(`${BASE_URL}/api/leads/${id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
     body: JSON.stringify(updates),
@@ -110,7 +114,7 @@ export async function updateLead(token, id, updates) {
 }
 
 export async function deleteLead(token, id) {
-  const response = await fetch(`http://localhost:5001/api/leads/${id}`, {
+  const response = await fetch(`${BASE_URL}/api/leads/${id}`, {
     method: 'DELETE',
     headers: { 'Authorization': `Bearer ${token}` },
   });
@@ -119,7 +123,7 @@ export async function deleteLead(token, id) {
 
 // Attendance
 export async function getAttendance(token, user, date) {
-  let url = 'http://localhost:5001/api/attendance';
+  let url = `${BASE_URL}/api/attendance`;
   const params = [];
   if (user) params.push(`user=${user}`);
   if (date) params.push(`date=${date}`);
@@ -131,7 +135,7 @@ export async function getAttendance(token, user, date) {
 }
 
 export async function clockIn(token) {
-  const response = await fetch('http://localhost:5001/api/attendance/clockin', {
+  const response = await fetch(`${BASE_URL}/api/attendance/clockin`, {
     method: 'POST',
     headers: { 'Authorization': `Bearer ${token}` }
   });
@@ -139,7 +143,7 @@ export async function clockIn(token) {
 }
 
 export async function clockOut(token) {
-  const response = await fetch('http://localhost:5001/api/attendance/clockout', {
+  const response = await fetch(`${BASE_URL}/api/attendance/clockout`, {
     method: 'POST',
     headers: { 'Authorization': `Bearer ${token}` }
   });
@@ -147,9 +151,9 @@ export async function clockOut(token) {
 }
 
 export async function deleteAttendance(token, id) {
-  const response = await fetch(`http://localhost:5001/api/attendance/${id}`, {
+  const response = await fetch(`${BASE_URL}/api/attendance/${id}`, {
     method: 'DELETE',
     headers: { 'Authorization': `Bearer ${token}` }
   });
   return handleApiResponse(response);
-} 
+}
