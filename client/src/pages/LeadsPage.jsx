@@ -14,7 +14,7 @@ const platforms = [
 ];
 
 const statuses = [
-  'new', 'contacted', 'converted', 'lost'
+  'new', 'contacted', 'inprogress', 'converted', 'lost'
 ];
 
 export default function LeadsPage() {

@@ -4,9 +4,25 @@ export async function handleApiResponse(response) {
     return null;
   }
   if (!response.ok) {
-    const text = await response.text();
-    console.error('HTTP error! status:', response.status, 'Response:', text);
-    throw new Error('Received non-JSON response');
+    // Handle 401 Unauthorized: clear token and redirect to login
+    if (response.status === 401) {
+      localStorage.removeItem('token');
+      window.location.href = '/login';
+    }
+    let errorText;
+    try {
+      errorText = await response.text();
+      // Try to parse JSON error message
+      let errorJson;
+      try {
+        errorJson = JSON.parse(errorText);
+      } catch {}
+      if (errorJson && errorJson.message) {
+        throw new Error(errorJson.message);
+      }
+    } catch {}
+    console.error('HTTP error! status:', response.status, 'Response:', errorText);
+    throw new Error('HTTP error! status: ' + response.status + (errorText ? ' Response: ' + errorText : ''));
   }
   return response.json();
 }

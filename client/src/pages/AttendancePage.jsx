@@ -138,16 +138,11 @@ export default function AttendancePage() {
 
   // Grouped view for single user (agent, or admin with userFilter)
   let grouped = {};
-  let maxPairs = 0;
   if (currentUser) {
     if (currentUser.role === 'admin' && userFilter) {
-      // Admin viewing a single user
       grouped = groupAttendanceByDate(records);
-      maxPairs = getMaxPairs(grouped);
     } else if (currentUser.role !== 'admin') {
-      // Agent
       grouped = groupAttendanceByDate(records);
-      maxPairs = getMaxPairs(grouped);
     }
   }
 
@@ -191,27 +186,27 @@ export default function AttendancePage() {
           <div>
             <h2 className="text-xl font-semibold mb-2">Attendance History</h2>
             <div className="overflow-x-auto">
-              <table className="min-w-full border text-sm">
+              <table className="min-w-full border text-sm rounded-xl overflow-hidden shadow-xl bg-white/80 backdrop-blur-md">
                 <thead>
                   <tr className="bg-blue-100">
                     <th className="py-2 px-3 border">Date</th>
-                    {Array.from({ length: maxPairs }).map((_, i) => [
-                      <th key={`in${i}`} className="py-2 px-3 border">Clock In {i + 1}</th>,
-                      <th key={`out${i}`} className="py-2 px-3 border">Clock Out {i + 1}</th>
-                    ])}
+                    <th className="py-2 px-3 border">Clock In</th>
+                    <th className="py-2 px-3 border">Clock Out</th>
                   </tr>
                 </thead>
                 <tbody>
                   {Object.entries(grouped).length === 0 ? (
-                    <tr><td colSpan={1 + maxPairs * 2} className="text-center py-4">No records found.</td></tr>
+                    <tr><td colSpan={3} className="text-center py-4">No records found.</td></tr>
                   ) : Object.entries(grouped).map(([date, recs]) => (
-                    <tr key={date} className="even:bg-gray-50">
-                      <td className="py-1 px-3 border">{date}</td>
-                      {Array.from({ length: maxPairs }).map((_, i) => [
-                        <td key={`in${i}`} className="py-1 px-3 border">{recs[i]?.clockIn ? new Date(recs[i].clockIn).toLocaleTimeString() : '-'}</td>,
-                        <td key={`out${i}`} className="py-1 px-3 border">{recs[i]?.clockOut ? new Date(recs[i].clockOut).toLocaleTimeString() : '-'}</td>
-                      ])}
-                    </tr>
+                    recs.map((rec, idx) => (
+                      <tr key={rec._id} className="even:bg-blue-50">
+                        {idx === 0 && (
+                          <td className="py-1 px-3 border font-semibold text-gray-800" rowSpan={recs.length}>{date}</td>
+                        )}
+                        <td className="py-1 px-3 border text-gray-700">{rec.clockIn ? new Date(rec.clockIn).toLocaleTimeString() : '-'}</td>
+                        <td className="py-1 px-3 border text-gray-700">{rec.clockOut ? new Date(rec.clockOut).toLocaleTimeString() : '-'}</td>
+                      </tr>
+                    ))
                   ))}
                 </tbody>
               </table>

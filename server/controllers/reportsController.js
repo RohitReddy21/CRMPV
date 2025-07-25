@@ -91,8 +91,27 @@ export const leadsReport = async (req, res) => {
 
 export const salesReport = async (req, res) => {
   try {
-    // Placeholder: implement aggregation for your Sale model
-    res.json({ message: 'Sales report not implemented yet.' });
+    const { range, month, year } = req.query;
+    const { start, end } = getDateRange(range, month, year);
+    // Aggregate leads by status for the given date range
+    const match = { createdAt: { $gte: start, $lt: end } };
+    const statuses = ['new', 'contacted', 'inprogress', 'converted', 'lost'];
+    const data = await Lead.aggregate([
+      { $match: match },
+      {
+        $group: {
+          _id: '$status',
+          count: { $sum: 1 }
+        }
+      }
+    ]);
+    // Format result as { status: count }
+    const result = {};
+    statuses.forEach(status => {
+      const found = data.find(d => d._id === status);
+      result[status] = found ? found.count : 0;
+    });
+    res.json({ statusCounts: result });
   } catch (error) {
     res.status(500).json({ message: 'Server error', error: error.message });
   }
