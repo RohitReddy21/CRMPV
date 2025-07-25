@@ -2,7 +2,24 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { io } from 'socket.io-client';
 import axios from 'axios';
+import CryptoJS from 'crypto-js';
 const SOCKET_URL = 'http://localhost:5001';
+
+const ENCRYPTION_KEY = '12345678901234567890123456789012'; // Replace with your actual key, keep it secure
+
+function decrypt(text) {
+  if (!text || !text.includes(':')) return text;
+  const textParts = text.split(':');
+  const iv = CryptoJS.enc.Hex.parse(textParts.shift());
+  const encryptedText = CryptoJS.enc.Hex.parse(textParts.join(':'));
+  const key = CryptoJS.enc.Utf8.parse(ENCRYPTION_KEY);
+  const decrypted = CryptoJS.AES.decrypt(
+    { ciphertext: encryptedText },
+    key,
+    { iv: iv, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 }
+  );
+  return decrypted.toString(CryptoJS.enc.Utf8);
+}
 
 const ChatPage = ({ currentUser }) => {
   const [users, setUsers] = useState([]);
@@ -228,7 +245,16 @@ const ChatPage = ({ currentUser }) => {
                   <span className="text-sm font-semibold text-slate-700">{user?.name || user?.email || 'User'}</span>
                   <span className="text-xs text-slate-400 ml-1">{msg.timestamp ? new Date(msg.timestamp).toLocaleTimeString() : ''}</span>
                 </div>
-                <div className={`rounded-2xl px-5 py-3 text-base max-w-[60%] shadow ${isMine ? 'bg-indigo-600 text-white self-end' : 'bg-indigo-100 text-indigo-900 self-start'}`}>{msg.content}</div>
+                <div className={`rounded-2xl px-5 py-3 text-base max-w-[60%] shadow ${isMine ? 'bg-indigo-600 text-white self-end' : 'bg-indigo-100 text-indigo-900 self-start'}`}>
+                  {(() => {
+                    const decrypted = decrypt(msg.content);
+                    if (!decrypted) {
+                      console.warn('Decryption failed or empty:', msg.content);
+                      return <span style={{ color: 'red' }}>Decryption failed</span>;
+                    }
+                    return decrypted;
+                  })()}
+                </div>
               </div>
             );
           })}
