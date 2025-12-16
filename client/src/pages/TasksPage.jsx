@@ -81,12 +81,14 @@ export default function TasksPage() {
                         <h1 className="text-3xl font-extrabold text-gray-800">Task Manager</h1>
                         <p className="text-gray-500">Coordinate and track team tasks</p>
                     </div>
-                    <button
-                        onClick={() => setShowModal(true)}
-                        className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-xl font-bold shadow-lg hover:shadow-xl hover:scale-105 transition-all"
-                    >
-                        <FaPlus /> New Task
-                    </button>
+                    {currentUser.role === 'admin' && (
+                        <button
+                            onClick={() => setShowModal(true)}
+                            className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-xl font-bold shadow-lg hover:shadow-xl hover:scale-105 transition-all"
+                        >
+                            <FaPlus /> New Task
+                        </button>
+                    )}
                 </div>
 
                 <div className="grid gap-4">

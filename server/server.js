@@ -74,6 +74,25 @@ io.on('connection', (socket) => {
   socket.on('identify', (userId) => {
     connectedUsers.set(userId, socket.id);
     socket.join(userId); // Join a room for the user
+    // Broadcast online status
+    socket.broadcast.emit('userStatus', { userId, status: 'online' });
+  });
+
+  // Handle typing events
+  socket.on('typing', ({ receiver, isGroup }) => {
+    if (isGroup) {
+      socket.to(receiver).emit('displayTyping', { sender: receiver }); // Simplification for groups
+    } else {
+      socket.to(receiver).emit('displayTyping', { sender: socket.handshake.query.userId || Array.from(connectedUsers.keys()).find(key => connectedUsers.get(key) === socket.id) });
+    }
+  });
+
+  socket.on('stopTyping', ({ receiver, isGroup }) => {
+    if (isGroup) {
+      socket.to(receiver).emit('hideTyping', { sender: receiver });
+    } else {
+      socket.to(receiver).emit('hideTyping', { sender: socket.handshake.query.userId || Array.from(connectedUsers.keys()).find(key => connectedUsers.get(key) === socket.id) });
+    }
   });
   // Listen for chat messages
   socket.on('chatMessage', async ({ sender, receiver, content, isGroup }) => {

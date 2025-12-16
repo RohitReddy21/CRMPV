@@ -15,8 +15,44 @@ const ChatPage = ({ currentUser }) => {
   const [showGroupModal, setShowGroupModal] = useState(false);
   const [groupMembers, setGroupMembers] = useState([]); // userIds
   const [groupToEdit, setGroupToEdit] = useState(null);
+  const [isTyping, setIsTyping] = useState(false);
+  const typingTimeoutRef = useRef(null);
   const socketRef = useRef();
   const messagesEndRef = useRef(null);
+
+  // Handle typing indicator
+  const handleTyping = (e) => {
+    setInput(e.target.value);
+
+    if (!socketRef.current) return;
+
+    // Emit typing event
+    socketRef.current.emit('typing', { receiver: selectedChat, isGroup });
+
+    if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+
+    typingTimeoutRef.current = setTimeout(() => {
+      socketRef.current.emit('stopTyping', { receiver: selectedChat, isGroup });
+    }, 1000);
+  };
+
+  // Listen for typing events
+  useEffect(() => {
+    if (!socketRef.current) return;
+
+    socketRef.current.on('displayTyping', ({ sender }) => {
+      if (sender === selectedChat) setIsTyping(true);
+    });
+
+    socketRef.current.on('hideTyping', ({ sender }) => {
+      if (sender === selectedChat) setIsTyping(false);
+    });
+
+    return () => {
+      socketRef.current.off('displayTyping');
+      socketRef.current.off('hideTyping');
+    }
+  }, [selectedChat]);
 
   // Persist selection
   useEffect(() => {
@@ -211,17 +247,26 @@ const ChatPage = ({ currentUser }) => {
           </div>
         ) : (
           <>
-            <div className="h-16 border-b border-gray-100 flex items-center px-6 bg-white shrink-0 z-10">
-              <div className="w-10 h-10 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-lg mr-4">
-                {isGroup ? '#' : getUserInitials(getUserById(selectedChat))}
-              </div>
-              <div>
-                <h3 className="font-bold text-gray-800 text-lg">{getChatName()}</h3>
-                {isGroup && <span className="text-xs text-gray-500">{groupToEdit ? `${groupToEdit.members?.length || 0} members` : 'Group Chat'}</span>}
+            {/* Chat Header */}
+            <div className="h-16 border-b border-gray-100 flex items-center px-6 bg-white shrink-0 z-10 justify-between">
+              <div className="flex items-center">
+                <div className="w-10 h-10 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-lg mr-4">
+                  {isGroup ? '#' : getUserInitials(getUserById(selectedChat))}
+                </div>
+                <div>
+                  <h3 className="font-bold text-gray-800 text-lg">{getChatName()}</h3>
+                  {isGroup
+                    ? <span className="text-xs text-gray-500">{groupToEdit ? `${groupToEdit.members?.length || 0} members` : 'Group Chat'}</span>
+                    : isTyping
+                      ? <span className="text-xs text-indigo-500 font-semibold animate-pulse">Typing...</span>
+                      : <span className="text-xs text-green-500">Online</span>
+                  }
+                </div>
               </div>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-slate-50">
+            {/* Messages Area */}
+            <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-slate-50 relative custom-scrollbar header-background">
               {messages.map((msg, idx) => {
                 const isMine = msg.sender === currentUser._id;
                 const user = getUserById(msg.sender);
@@ -229,36 +274,47 @@ const ChatPage = ({ currentUser }) => {
                   <div key={idx} className={`flex ${isMine ? 'justify-end' : 'justify-start'}`}>
                     <div className={`flex flex-col max-w-[70%] ${isMine ? 'items-end' : 'items-start'}`}>
                       {!isMine && isGroup && <span className="text-xs text-gray-500 ml-1 mb-1">{user?.name}</span>}
-                      <div className={`px-5 py-3 rounded-2xl shadow-sm text-[15px] leading-relaxed relative group ${isMine
+                      <div className={`px-4 py-2 rounded-2xl shadow-sm text-[15px] leading-relaxed relative group transition-all duration-200 hover:shadow-md ${isMine
                         ? 'bg-gradient-to-tr from-indigo-600 to-indigo-500 text-white rounded-tr-none'
                         : 'bg-white text-gray-800 border border-gray-100 rounded-tl-none'
                         }`}>
                         {msg.content}
-
+                        <div className={`text-[10px] mt-1 opacity-70 flex items-center justify-end gap-1 ${isMine ? 'text-indigo-100' : 'text-gray-400'}`}>
+                          {formatTime(msg.timestamp)}
+                          {isMine && <span>✓✓</span>}
+                        </div>
                       </div>
-                      <span className="text-[10px] text-gray-400 mt-1 opacity-70 mx-1">
-                        {formatTime(msg.timestamp)}
-                      </span>
                     </div>
                   </div>
                 );
               })}
+              {isTyping && !isGroup && (
+                <div className="flex justify-start animate-fade-in-up">
+                  <div className="bg-white px-4 py-3 rounded-2xl rounded-tl-none border border-gray-100 shadow-sm flex items-center gap-1">
+                    <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></span>
+                    <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-75"></span>
+                    <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-150"></span>
+                  </div>
+                </div>
+              )}
               <div ref={messagesEndRef} />
             </div>
 
+            {/* Input Area */}
             <div className="p-4 bg-white border-t border-gray-100">
-              <div className="flex gap-2 items-center bg-gray-50 p-1.5 rounded-full border border-gray-200 focus-within:border-indigo-400 focus-within:ring-2 focus-within:ring-indigo-100 transition-all">
+              <div className="flex gap-2 items-center bg-gray-50 p-2 rounded-2xl border border-gray-200 focus-within:border-indigo-400 focus-within:ring-4 focus-within:ring-indigo-100 transition-all">
+                <button className="text-gray-400 hover:text-indigo-600 px-2 text-xl">+</button>
                 <input
                   value={input}
-                  onChange={e => setInput(e.target.value)}
+                  onChange={handleTyping}
                   onKeyDown={e => e.key === 'Enter' && sendMessage()}
                   placeholder="Type a message..."
-                  className="flex-1 bg-transparent border-none focus:ring-0 px-4 py-2 text-gray-700 placeholder-gray-400"
+                  className="flex-1 bg-transparent border-none focus:ring-0 px-2 py-2 text-gray-700 placeholder-gray-400"
                 />
                 <button
                   onClick={sendMessage}
                   disabled={!input.trim()}
-                  className="w-10 h-10 rounded-full bg-indigo-600 text-white flex items-center justify-center hover:bg-indigo-700 transition disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+                  className="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center hover:bg-indigo-700 transition disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg active:scale-95 transform"
                 >
                   ➤
                 </button>
