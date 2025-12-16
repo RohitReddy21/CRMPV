@@ -184,7 +184,7 @@ const ChatPage = ({ currentUser }) => {
 
   return (
     <div className="flex h-[80vh] bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100 max-w-6xl mx-auto mt-6">
-      <aside className="w-72 bg-gray-50 border-r border-gray-200 flex flex-col">
+      <aside className={`w-full md:w-72 bg-gray-50 border-r border-gray-200 flex flex-col ${selectedChat ? 'hidden md:flex' : 'flex'}`}>
         <div className="p-5 border-b border-gray-200 bg-white">
           <h2 className="text-xl font-bold text-gray-800">Messages</h2>
           <div className="flex mt-4 gap-2">
@@ -238,7 +238,7 @@ const ChatPage = ({ currentUser }) => {
         </div>
       </aside>
 
-      <main className="flex-1 flex flex-col bg-white relative">
+      <main className={`flex-1 flex-col bg-white relative ${!selectedChat ? 'hidden md:flex' : 'flex'}`}>
         {!selectedChat ? (
           <div className="flex-1 flex flex-col items-center justify-center text-gray-400 p-8 text-center animate-fade-in">
             <div className="w-20 h-20 bg-indigo-50 rounded-full flex items-center justify-center text-4xl mb-4">💬</div>
@@ -248,13 +248,16 @@ const ChatPage = ({ currentUser }) => {
         ) : (
           <>
             {/* Chat Header */}
-            <div className="h-16 border-b border-gray-100 flex items-center px-6 bg-white shrink-0 z-10 justify-between">
-              <div className="flex items-center">
-                <div className="w-10 h-10 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-lg mr-4">
+            <div className="h-16 border-b border-gray-100 flex items-center px-4 bg-white shrink-0 z-10 justify-between">
+              <div className="flex items-center gap-3">
+                <button onClick={() => setSelectedChat(null)} className="md:hidden p-2 text-gray-500 hover:bg-gray-100 rounded-full">
+                  ←
+                </button>
+                <div className="w-10 h-10 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-lg">
                   {isGroup ? '#' : getUserInitials(getUserById(selectedChat))}
                 </div>
                 <div>
-                  <h3 className="font-bold text-gray-800 text-lg">{getChatName()}</h3>
+                  <h3 className="font-bold text-gray-800 text-lg leading-tight">{getChatName()}</h3>
                   {isGroup
                     ? <span className="text-xs text-gray-500">{groupToEdit ? `${groupToEdit.members?.length || 0} members` : 'Group Chat'}</span>
                     : isTyping
