@@ -4,6 +4,25 @@ import Group from '../models/Group.js';
 import authMiddleware from '../middleware/authMiddleware.js';
 // import chatRoutes from './routes/chat.js';
 
+import crypto from 'crypto';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+const ENCRYPTION_KEY = process.env.MESSAGE_SECRET_KEY;
+const IV_LENGTH = 16; // AES block size
+
+function decrypt(text) {
+  if (!text.includes(':')) return text; // already decrypted or plain
+  const textParts = text.split(':');
+  const iv = Buffer.from(textParts.shift(), 'hex');
+  const encryptedText = Buffer.from(textParts.join(':'), 'hex');
+  const decipher = crypto.createDecipheriv('aes-256-cbc', Buffer.from(ENCRYPTION_KEY), iv);
+  let decrypted = decipher.update(encryptedText);
+  decrypted = Buffer.concat([decrypted, decipher.final()]);
+  return decrypted.toString();
+}
+
 const router = express.Router();
 
 // Add users to a group
@@ -53,7 +72,10 @@ router.get('/group/:groupId', authMiddleware, async (req, res) => {
   const groupId = req.params.groupId;
   try {
     let messages = await Message.find({ receiver: groupId, receiverModel: 'Group' }).sort({ timestamp: 1 });
-    messages = messages.map(msg => msg.toObject());
+    messages = messages.map(msg => ({
+      ...msg.toObject(),
+      content: decrypt(msg.content)
+    }));
     res.json(messages);
   } catch (err) {
     res.status(500).json({ error: 'Failed to fetch group messages' });
@@ -71,7 +93,10 @@ router.get('/:userId', authMiddleware, async (req, res) => {
         { sender: otherUserId, receiver: userId }
       ]
     }).sort({ timestamp: 1 });
-    messages = messages.map(msg => msg.toObject());
+    messages = messages.map(msg => ({
+      ...msg.toObject(),
+      content: decrypt(msg.content)
+    }));
     res.json(messages);
   } catch (err) {
     res.status(500).json({ error: 'Failed to fetch messages' });

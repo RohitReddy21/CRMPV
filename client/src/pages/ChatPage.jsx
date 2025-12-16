@@ -8,8 +8,8 @@ const ChatPage = ({ currentUser }) => {
   const [users, setUsers] = useState([]);
   const [groups, setGroups] = useState([]);
   const [newGroupName, setNewGroupName] = useState('');
-  const [selectedChat, setSelectedChat] = useState(null);
-  const [isGroup, setIsGroup] = useState(false);
+  const [selectedChat, setSelectedChat] = useState(localStorage.getItem('selectedChat') || null);
+  const [isGroup, setIsGroup] = useState(localStorage.getItem('isGroup') === 'true');
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [showGroupModal, setShowGroupModal] = useState(false);
@@ -17,6 +17,14 @@ const ChatPage = ({ currentUser }) => {
   const [groupToEdit, setGroupToEdit] = useState(null);
   const socketRef = useRef();
   const messagesEndRef = useRef(null);
+
+  // Persist selection
+  useEffect(() => {
+    if (selectedChat) {
+      localStorage.setItem('selectedChat', selectedChat);
+      localStorage.setItem('isGroup', isGroup);
+    }
+  }, [selectedChat, isGroup]);
 
   // Open group member modal
   const openGroupModal = (group) => {
@@ -222,8 +230,8 @@ const ChatPage = ({ currentUser }) => {
                     <div className={`flex flex-col max-w-[70%] ${isMine ? 'items-end' : 'items-start'}`}>
                       {!isMine && isGroup && <span className="text-xs text-gray-500 ml-1 mb-1">{user?.name}</span>}
                       <div className={`px-5 py-3 rounded-2xl shadow-sm text-[15px] leading-relaxed relative group ${isMine
-                          ? 'bg-gradient-to-tr from-indigo-600 to-indigo-500 text-white rounded-tr-none'
-                          : 'bg-white text-gray-800 border border-gray-100 rounded-tl-none'
+                        ? 'bg-gradient-to-tr from-indigo-600 to-indigo-500 text-white rounded-tr-none'
+                        : 'bg-white text-gray-800 border border-gray-100 rounded-tl-none'
                         }`}>
                         {msg.content}
 
