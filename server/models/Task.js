@@ -6,8 +6,9 @@ const taskSchema = new mongoose.Schema({
     dueDate: { type: Date, required: true },
     priority: { type: String, enum: ['High', 'Medium', 'Low'], default: 'Medium' },
     status: { type: String, enum: ['Pending', 'In Progress', 'Completed'], default: 'Pending' },
-    assignedTo: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // The user who owns this task
-    relatedLead: { type: mongoose.Schema.Types.ObjectId, ref: 'Lead' }, // Optional link to a lead
+    assignedTo: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    relatedLead: { type: mongoose.Schema.Types.ObjectId, ref: 'Lead' },
 }, { timestamps: true });
 
 export default mongoose.model('Task', taskSchema);

@@ -1,11 +1,17 @@
 import Task from '../models/Task.js';
 
-// Get all tasks for the logged-in user
+// Get all tasks for the logged-in user (assigned to them OR created by them)
 export const getTasks = async (req, res) => {
     try {
-        const tasks = await Task.find({ assignedTo: req.user.id }).sort({ dueDate: 1 }); // Sort by soonest due
+        const tasks = await Task.find({
+            $or: [{ assignedTo: req.user.id }, { createdBy: req.user.id }]
+        })
+            .sort({ dueDate: 1 })
+            .populate('assignedTo', 'name email')
+            .populate('createdBy', 'name email');
         res.json(tasks);
     } catch (error) {
+        console.error(error);
         res.status(500).json({ error: 'Failed to fetch tasks' });
     }
 };
@@ -13,18 +19,23 @@ export const getTasks = async (req, res) => {
 // Create a new task
 export const createTask = async (req, res) => {
     try {
-        const { title, description, dueDate, priority, relatedLead } = req.body;
+        const { title, description, dueDate, priority, assignedTo, relatedLead } = req.body;
         const task = new Task({
             title,
             description,
             dueDate,
             priority,
-            assignedTo: req.user.id,
+            assignedTo: assignedTo || req.user.id, // Default to self if not specified
+            createdBy: req.user.id,
             relatedLead
         });
         await task.save();
-        res.status(201).json(task);
+
+        // Return populated task for immediate display
+        const populatedTask = await Task.findById(task._id).populate('assignedTo', 'name').populate('createdBy', 'name');
+        res.status(201).json(populatedTask);
     } catch (error) {
+        console.error(error);
         res.status(400).json({ error: 'Failed to create task' });
     }
 };
@@ -33,11 +44,15 @@ export const createTask = async (req, res) => {
 export const updateTask = async (req, res) => {
     try {
         const task = await Task.findOneAndUpdate(
-            { _id: req.params.id, assignedTo: req.user.id },
+            {
+                _id: req.params.id,
+                $or: [{ assignedTo: req.user.id }, { createdBy: req.user.id }] // Allow creator or assignee to update
+            },
             req.body,
             { new: true }
-        );
-        if (!task) return res.status(404).json({ error: 'Task not found' });
+        ).populate('assignedTo', 'name').populate('createdBy', 'name');
+
+        if (!task) return res.status(404).json({ error: 'Task not found or unauthorized' });
         res.json(task);
     } catch (error) {
         res.status(500).json({ error: 'Failed to update task' });
@@ -47,8 +62,11 @@ export const updateTask = async (req, res) => {
 // Delete a task
 export const deleteTask = async (req, res) => {
     try {
-        const task = await Task.findOneAndDelete({ _id: req.params.id, assignedTo: req.user.id });
-        if (!task) return res.status(404).json({ error: 'Task not found' });
+        const task = await Task.findOneAndDelete({
+            _id: req.params.id,
+            createdBy: req.user.id // Only creator can delete? Or assignee too? Let's say only creator for safety
+        });
+        if (!task) return res.status(404).json({ error: 'Task not found or unauthorized' });
         res.json({ message: 'Task deleted' });
     } catch (error) {
         res.status(500).json({ error: 'Failed to delete task' });
