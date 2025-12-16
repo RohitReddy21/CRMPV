@@ -82,31 +82,33 @@ export default function Dashboard() {
   if (!user) return <div className="p-8 text-center">Loading...</div>;
 
   return (
-    <div className="min-h-screen w-full flex flex-col items-center justify-start bg-gradient-to-br from-[#e0e7ff] via-[#f3e8ff] to-[#fff]">
-      <div className="max-w-6xl w-full mt-12 p-8 bg-white/80 rounded-xl shadow-lg backdrop-blur-md">
-        <h1 className="text-4xl font-extrabold mb-10 text-gray-800 drop-shadow-lg tracking-tight animate-fade-in-down">Dashboard</h1>
+    <div className="min-h-screen w-full flex flex-col items-center justify-start bg-animated p-6">
+      <div className="max-w-7xl w-full mt-8 p-8 glass-panel rounded-3xl shadow-2xl">
+        <h1 className="text-5xl font-extrabold mb-12 text-transparent bg-clip-text bg-gradient-to-r from-gray-800 to-gray-600 drop-shadow-sm tracking-tight animate-fade-in-down text-center">
+          Admin Dashboard
+        </h1>
         {/* Overview Cards */}
         {user.role === 'admin' && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-            <div className="flex flex-col items-center bg-gradient-to-br from-blue-100 to-white rounded-2xl shadow-lg p-6 hover:scale-105 transition-all duration-200 animate-fade-in-up">
-              <FaUsers className="text-4xl text-blue-500 mb-2" />
-              <div className="text-2xl font-bold text-gray-800">{stats ? stats.total : '--'}</div>
-              <div className="text-gray-600">Total Users</div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12 perspective-1000">
+            <div className="flex flex-col items-center bg-white/60 backdrop-blur rounded-2xl shadow-xl p-8 card-3d-hover border border-white/50 group">
+              <FaUsers className="text-5xl text-blue-500 mb-4 animate-float group-hover:first-line:text-blue-600 transition-colors" />
+              <div className="text-4xl font-black text-gray-800 mb-1">{stats ? stats.total : '--'}</div>
+              <div className="text-gray-500 font-medium uppercase tracking-wider text-sm">Total Users</div>
             </div>
-            <div className="flex flex-col items-center bg-gradient-to-br from-purple-100 to-white rounded-2xl shadow-lg p-6 hover:scale-105 transition-all duration-200 animate-fade-in-up">
-              <FaClipboardList className="text-4xl text-purple-500 mb-2" />
-              <div className="text-2xl font-bold text-gray-800">{leadCount}</div>
-              <div className="text-gray-600">Total Leads</div>
+            <div className="flex flex-col items-center bg-white/60 backdrop-blur rounded-2xl shadow-xl p-8 card-3d-hover border border-white/50 group">
+              <FaClipboardList className="text-5xl text-purple-500 mb-4 animate-float-delayed group-hover:text-purple-600 transition-colors" />
+              <div className="text-4xl font-black text-gray-800 mb-1">{leadCount}</div>
+              <div className="text-gray-500 font-medium uppercase tracking-wider text-sm">Total Leads</div>
             </div>
-            <div className="flex flex-col items-center bg-gradient-to-br from-green-100 to-white rounded-2xl shadow-lg p-6 hover:scale-105 transition-all duration-200 animate-fade-in-up">
-              <FaUserCheck className="text-4xl text-green-500 mb-2" />
-              <div className="text-2xl font-bold text-gray-800">{attendanceCount}</div>
-              <div className="text-gray-600">Attendance Records</div>
+            <div className="flex flex-col items-center bg-white/60 backdrop-blur rounded-2xl shadow-xl p-8 card-3d-hover border border-white/50 group">
+              <FaUserCheck className="text-5xl text-green-500 mb-4 animate-float group-hover:text-green-600 transition-colors" />
+              <div className="text-4xl font-black text-gray-800 mb-1">{attendanceCount}</div>
+              <div className="text-gray-500 font-medium uppercase tracking-wider text-sm">Attendance</div>
             </div>
-            <div className="flex flex-col items-center bg-gradient-to-br from-yellow-100 to-white rounded-2xl shadow-lg p-6 hover:scale-105 transition-all duration-200 animate-fade-in-up">
-              <FaChartBar className="text-4xl text-yellow-500 mb-2" />
-              <div className="text-2xl font-bold text-gray-800">4</div>
-              <div className="text-gray-600">Reports</div>
+            <div className="flex flex-col items-center bg-white/60 backdrop-blur rounded-2xl shadow-xl p-8 card-3d-hover border border-white/50 group">
+              <FaChartBar className="text-5xl text-yellow-500 mb-4 animate-float-delayed group-hover:text-yellow-600 transition-colors" />
+              <div className="text-4xl font-black text-gray-800 mb-1">4</div>
+              <div className="text-gray-500 font-medium uppercase tracking-wider text-sm">Reports</div>
             </div>
           </div>
         )}
@@ -119,78 +121,104 @@ export default function Dashboard() {
         {/* Main Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Recent Activity */}
-          <div className="bg-white/90 rounded-2xl shadow-lg p-6 animate-fade-in-up">
-            <h2 className="text-xl font-bold mb-4 text-gray-800">Recent Activity</h2>
-            <div className="mb-2 font-semibold text-gray-700">Leads</div>
-            <ul className="mb-4">
-              {recentLeads.length === 0 ? <li className="text-gray-500">No recent leads.</li> : recentLeads.map(l => (
-                <li key={l._id} className="mb-1 flex items-center gap-2">
-                  <span className="font-bold text-blue-700">{l.name}</span>
-                  <span className="text-xs text-gray-500">({l.platform})</span>
-                  <span className="text-xs text-gray-400">{new Date(l.createdAt).toLocaleString()}</span>
+          <div className="bg-white/40 backdrop-blur-md rounded-3xl shadow-lg p-8 card-3d-hover border border-white/40">
+            <h2 className="text-2xl font-bold mb-6 text-gray-800 flex items-center gap-2">
+              <span className="text-blue-500">●</span> Recent Activity
+            </h2>
+            <div className="mb-3 font-bold text-gray-600 uppercase text-xs tracking-wider">Leads</div>
+            <ul className="mb-6 space-y-3">
+              {recentLeads.length === 0 ? <li className="text-gray-500 italic">No recent leads.</li> : recentLeads.map(l => (
+                <li key={l._id} className="flex items-center gap-3 bg-white/50 p-2 rounded-lg shadow-sm">
+                  <div className="w-2 h-2 rounded-full bg-blue-500"></div>
+                  <span className="font-bold text-gray-800">{l.name}</span>
+                  <span className="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded-full font-bold uppercase">{l.platform}</span>
+                  <span className="text-xs text-gray-400 ml-auto">{new Date(l.createdAt).toLocaleDateString()}</span>
                 </li>
               ))}
             </ul>
-            <div className="mb-2 font-semibold text-gray-700">Attendance</div>
-            <ul>
-              {recentAttendance.length === 0 ? <li className="text-gray-500">No recent attendance.</li> : recentAttendance.map(a => (
-                <li key={a._id} className="mb-1 flex items-center gap-2">
-                  <span className="font-bold text-green-700">{a.user?.name || 'User'}</span>
-                  <span className="text-xs text-gray-500">{a.clockIn ? 'Clocked In' : ''}{a.clockOut ? ' / Clocked Out' : ''}</span>
-                  <span className="text-xs text-gray-400">{new Date(a.createdAt).toLocaleString()}</span>
+            <div className="mb-3 font-bold text-gray-600 uppercase text-xs tracking-wider">Attendance</div>
+            <ul className="space-y-3">
+              {recentAttendance.length === 0 ? <li className="text-gray-500 italic">No recent attendance.</li> : recentAttendance.map(a => (
+                <li key={a._id} className="flex items-center gap-3 bg-white/50 p-2 rounded-lg shadow-sm">
+                  <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                  <span className="font-bold text-gray-800">{a.user?.name || 'User'}</span>
+                  <span className="text-xs text-gray-500">{a.clockIn ? 'Clocked In' : ''}</span>
+                  <span className="text-xs text-gray-400 ml-auto">{new Date(a.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                 </li>
               ))}
             </ul>
           </div>
           {/* Leads Breakdown Pie Chart */}
-          <div className="bg-white/90 rounded-2xl shadow-lg p-6 animate-fade-in-up flex flex-col items-center">
-            <h2 className="text-xl font-bold mb-4 text-gray-800">Leads Breakdown</h2>
-            <ResponsiveContainer width="100%" height={220}>
+          <div className="bg-white/40 backdrop-blur-md rounded-3xl shadow-lg p-8 card-3d-hover border border-white/40 flex flex-col items-center">
+            <h2 className="text-2xl font-bold mb-6 text-gray-800">Leads Breakdown</h2>
+            <ResponsiveContainer width="100%" height={250}>
               <PieChart>
-                <Pie data={leadsByPlatform} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={70} label>
+                <Pie data={leadsByPlatform} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={60} outerRadius={80} paddingAngle={5} label>
                   {leadsByPlatform.map((entry, idx) => (
-                    <Cell key={`cell-${idx}`} fill={entry.color} />
+                    <Cell key={`cell-${idx}`} fill={entry.color} stroke="none" />
                   ))}
                 </Pie>
-                <Tooltip />
-                <Legend />
+                <Tooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
+                <Legend verticalAlign="bottom" height={36} iconType="circle" />
               </PieChart>
             </ResponsiveContainer>
           </div>
           {/* Attendance Summary */}
-          <div className="bg-white/90 rounded-2xl shadow-lg p-6 animate-fade-in-up">
-            <h2 className="text-xl font-bold mb-4 text-gray-800">Attendance Summary</h2>
-            <div className="mb-2 font-semibold text-gray-700">Clocked In Today</div>
-            <ul className="mb-4">
-              {clockedInToday.length === 0 ? <li className="text-gray-500">No one clocked in today.</li> : clockedInToday.map(a => (
-                <li key={a._id} className="mb-1 flex items-center gap-2">
-                  <span className="font-bold text-green-700">{a.user?.name || 'User'}</span>
-                  <span className="text-xs text-gray-400">{a.clockIn ? new Date(a.clockIn).toLocaleTimeString() : ''}</span>
+          <div className="bg-white/40 backdrop-blur-md rounded-3xl shadow-lg p-8 card-3d-hover border border-white/40">
+            <h2 className="text-2xl font-bold mb-6 text-gray-800">Attendance Summary</h2>
+            <div className="mb-3 font-bold text-gray-600 uppercase text-xs tracking-wider">Clocked In Today</div>
+            <ul className="mb-6 space-y-2">
+              {clockedInToday.length === 0 ? <li className="text-gray-500 italic">No one clocked in today.</li> : clockedInToday.map(a => (
+                <li key={a._id} className="flex items-center gap-3 bg-white/50 p-3 rounded-xl">
+                  <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-green-600 font-bold">
+                    {a.user?.name?.[0] || 'U'}
+                  </div>
+                  <div>
+                    <div className="font-bold text-gray-800 text-sm">{a.user?.name || 'User'}</div>
+                    <div className="text-xs text-gray-500">{a.clockIn ? new Date(a.clockIn).toLocaleTimeString() : ''}</div>
+                  </div>
                 </li>
               ))}
             </ul>
-            <div className="mb-2 font-semibold text-gray-700">Your Today</div>
-            <ul>
-              {userToday && userToday.length === 0 ? <li className="text-gray-500">No attendance today.</li> : userToday && userToday.map(a => (
-                <li key={a._id} className="mb-1 flex items-center gap-2">
-                  <span className="font-bold text-blue-700">{a.clockIn ? 'Clock In' : ''}{a.clockOut ? ' / Clock Out' : ''}</span>
-                  <span className="text-xs text-gray-400">{a.clockIn ? new Date(a.clockIn).toLocaleTimeString() : ''}</span>
-                  <span className="text-xs text-gray-400">{a.clockOut ? ' - ' + new Date(a.clockOut).toLocaleTimeString() : ''}</span>
+            <div className="mb-3 font-bold text-gray-600 uppercase text-xs tracking-wider">Your Today</div>
+            <ul className="space-y-2">
+              {userToday && userToday.length === 0 ? <li className="text-gray-500 italic">No attendance today.</li> : userToday && userToday.map(a => (
+                <li key={a._id} className="bg-blue-50/50 p-4 rounded-xl border border-blue-100">
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="font-bold text-blue-800">Shift</span>
+                    <span className="text-xs bg-blue-200 text-blue-800 px-2 py-0.5 rounded-full">{new Date(a.createdAt).toLocaleDateString()}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <div className="text-center">
+                      <div className="text-gray-500 text-xs uppercase">In</div>
+                      <div className="font-mono font-semibold">{a.clockIn ? new Date(a.clockIn).toLocaleTimeString() : '--'}</div>
+                    </div>
+                    <div className="text-gray-300">→</div>
+                    <div className="text-center">
+                      <div className="text-gray-500 text-xs uppercase">Out</div>
+                      <div className="font-mono font-semibold">{a.clockOut ? new Date(a.clockOut).toLocaleTimeString() : '--'}</div>
+                    </div>
+                  </div>
                 </li>
               ))}
             </ul>
           </div>
           {/* Reports Preview (Bar Chart) */}
-          <div className="bg-white/90 rounded-2xl shadow-lg p-6 animate-fade-in-up flex flex-col items-center">
-            <h2 className="text-xl font-bold mb-4 text-gray-800">Reports Preview</h2>
-            <ResponsiveContainer width="100%" height={220}>
+          <div className="bg-white/40 backdrop-blur-md rounded-3xl shadow-lg p-8 card-3d-hover border border-white/40 flex flex-col items-center">
+            <h2 className="text-2xl font-bold mb-6 text-gray-800">Reports Preview</h2>
+            <ResponsiveContainer width="100%" height={250}>
               <BarChart data={reportsData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey="value" fill="#8884d8" radius={[8, 8, 0, 0]} />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
+                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#6b7280', fontSize: 12 }} dy={10} />
+                <YAxis axisLine={false} tickLine={false} tick={{ fill: '#6b7280', fontSize: 12 }} />
+                <Tooltip cursor={{ fill: 'rgba(0,0,0,0.05)' }} contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
+                <Bar dataKey="value" fill="url(#colorValue)" radius={[10, 10, 0, 0]} barSize={50} />
+                <defs>
+                  <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#8884d8" stopOpacity={0.8} />
+                    <stop offset="95%" stopColor="#8884d8" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
               </BarChart>
             </ResponsiveContainer>
           </div>
