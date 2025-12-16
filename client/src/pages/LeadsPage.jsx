@@ -177,54 +177,53 @@ export default function LeadsPage() {
         <input name="notes" placeholder="Notes" value={form.notes} onChange={handleChange} className="input input-bordered px-3 py-2 border rounded-lg w-full shadow focus:ring-2 focus:ring-blue-400 transition-all duration-200" />
         <button type="submit" className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-2 rounded-lg shadow-lg font-bold hover:scale-105 hover:from-blue-600 hover:to-purple-700 transition-all duration-200 active:scale-95">Add Lead</button>
       </form>
-    </div>
-      {/* Import/Export UI */ }
-  <div className="mb-8 flex flex-col md:flex-row gap-4 items-center w-full max-w-4xl animate-fade-in-up">
-    <div className="flex-1 w-full bg-white/40 p-4 rounded-xl border border-white/50 backdrop-blur-sm">
-      <label className="block font-semibold text-gray-800 mb-2">Bulk Operations</label>
-      <div className="flex flex-wrap gap-2 items-center">
-        <input type="file" accept=".xlsx,.xls,.csv" onChange={handleImportFile} className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 text-sm text-gray-500 w-full md:w-auto" />
-        {importPreview.length > 0 && (
-          <button onClick={handleImportUpload} disabled={importLoading} className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-bold shadow hover:bg-green-700 transition">
-            {importLoading ? 'Uploading...' : `Import ${importPreview.length} Leads`}
-          </button>
-        )}
-        <div className="flex-1"></div>
-        <button onClick={handleExport} className="flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-bold shadow hover:bg-indigo-700 transition">
-          Export to Excel
-        </button>
-      </div>
-    </div>
-  </div>
-  {/* Preview Table */ }
-  {
-    importPreview.length > 0 && (
-      <div className="mb-8 overflow-x-auto w-full max-w-4xl animate-fade-in-up">
-        <div className="font-semibold mb-2 text-white drop-shadow">Preview ({importPreview.length} rows):</div>
-        <table className="min-w-full border text-sm rounded-xl overflow-hidden shadow-xl bg-white/80 backdrop-blur-md animate-fade-in-up">
-          <thead>
-            <tr className="bg-gradient-to-r from-blue-100 to-purple-100">
-              {Object.keys(importPreview[0]).map(key => (
-                <th key={key} className="py-2 px-3 border font-bold text-gray-700">{key}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {importPreview.slice(0, 10).map((row, i) => (
-              <tr key={i} className="even:bg-blue-50 hover:bg-purple-100 transition-all duration-150">
-                {Object.keys(importPreview[0]).map(key => (
-                  <td key={key} className="py-1 px-3 border text-gray-800">{row[key]}</td>
-                ))}
-              </tr>
-            ))}
-            {importPreview.length > 10 && (
-              <tr><td colSpan={Object.keys(importPreview[0]).length} className="text-center py-2 text-gray-600">...and {importPreview.length - 10} more rows</td></tr>
+      {/* Import/Export UI */}
+      <div className="mb-8 flex flex-col md:flex-row gap-4 items-center w-full max-w-4xl animate-fade-in-up">
+        <div className="flex-1 w-full bg-white/40 p-4 rounded-xl border border-white/50 backdrop-blur-sm">
+          <label className="block font-semibold text-gray-800 mb-2">Bulk Operations</label>
+          <div className="flex flex-wrap gap-2 items-center">
+            <input type="file" accept=".xlsx,.xls,.csv" onChange={handleImportFile} className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 text-sm text-gray-500 w-full md:w-auto" />
+            {importPreview.length > 0 && (
+              <button onClick={handleImportUpload} disabled={importLoading} className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-bold shadow hover:bg-green-700 transition">
+                {importLoading ? 'Uploading...' : `Import ${importPreview.length} Leads`}
+              </button>
             )}
-          </tbody>
-        </table>
+            <div className="flex-1"></div>
+            <button onClick={handleExport} className="flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-bold shadow hover:bg-indigo-700 transition">
+              Export to Excel
+            </button>
+          </div>
+        </div>
       </div>
-    )
-  }
+      {/* Preview Table */}
+      {
+        importPreview.length > 0 && (
+          <div className="mb-8 overflow-x-auto w-full max-w-4xl animate-fade-in-up">
+            <div className="font-semibold mb-2 text-white drop-shadow">Preview ({importPreview.length} rows):</div>
+            <table className="min-w-full border text-sm rounded-xl overflow-hidden shadow-xl bg-white/80 backdrop-blur-md animate-fade-in-up">
+              <thead>
+                <tr className="bg-gradient-to-r from-blue-100 to-purple-100">
+                  {Object.keys(importPreview[0]).map(key => (
+                    <th key={key} className="py-2 px-3 border font-bold text-gray-700">{key}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {importPreview.slice(0, 10).map((row, i) => (
+                  <tr key={i} className="even:bg-blue-50 hover:bg-purple-100 transition-all duration-150">
+                    {Object.keys(importPreview[0]).map(key => (
+                      <td key={key} className="py-1 px-3 border text-gray-800">{row[key]}</td>
+                    ))}
+                  </tr>
+                ))}
+                {importPreview.length > 10 && (
+                  <tr><td colSpan={Object.keys(importPreview[0]).length} className="text-center py-2 text-gray-600">...and {importPreview.length - 10} more rows</td></tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        )
+      }
       <div className="flex items-center gap-2 mb-6 w-full max-w-4xl animate-fade-in-up">
         <label className="font-semibold text-white drop-shadow">Filter by Platform:</label>
         <select value={platformFilter} onChange={e => setPlatformFilter(e.target.value)} className="input input-bordered px-3 py-2 border rounded-lg shadow w-full max-w-xs bg-white/80">
