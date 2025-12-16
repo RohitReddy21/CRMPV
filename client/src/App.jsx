@@ -10,7 +10,7 @@ import ReportsPage from './pages/ReportsPage';
 import AttendanceReport from './pages/AttendanceReport';
 import LeadsReport from './pages/LeadsReport';
 import SalesReport from './pages/SalesReport';
-import SalesReport from './pages/SalesReport';
+
 import SalesPage from './pages/SalesPage';
 import TasksPage from './pages/TasksPage';
 import Sidebar from './components/Sidebar';

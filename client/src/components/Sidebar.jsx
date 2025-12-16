@@ -9,7 +9,8 @@ import {
     FaUserShield,
     FaBars,
     FaTimes,
-    FaSignOutAlt
+    FaSignOutAlt,
+    FaCheckSquare
 } from 'react-icons/fa';
 
 export default function Sidebar({ user, onLogout, isOpen, toggleSidebar }) {
@@ -82,6 +83,11 @@ export default function Sidebar({ user, onLogout, isOpen, toggleSidebar }) {
                     <Link to="/chat" className={navItemClass('/chat')}>
                         <FaComments className="text-lg" />
                         <span>Chat</span>
+                    </Link>
+
+                    <Link to="/tasks" className={navItemClass('/tasks')}>
+                        <FaCheckSquare className="text-lg" />
+                        <span>Tasks</span>
                     </Link>
 
                     {role === 'admin' && (
