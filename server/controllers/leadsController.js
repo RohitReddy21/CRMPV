@@ -3,8 +3,8 @@ import xlsx from 'xlsx';
 
 export const addLead = async (req, res) => {
   try {
-    const { name, contact, platform, status, assignedTo, notes, statusNote, active } = req.body;
-    const lead = new Lead({ name, contact, platform, status, assignedTo, notes, statusNote, active });
+    const { name, contact, platform, status, assignedTo, notes, statusNote, active, value, priority } = req.body;
+    const lead = new Lead({ name, contact, platform, status, assignedTo, notes, statusNote, active, value, priority });
     await lead.save();
     // Notify assigned user if connected
     if (assignedTo) {
@@ -37,7 +37,7 @@ export const getLeads = async (req, res) => {
 
 export const updateLead = async (req, res) => {
   try {
-    const updateFields = (({ name, contact, platform, status, assignedTo, notes, statusNote, active }) => ({ name, contact, platform, status, assignedTo, notes, statusNote, active }))(req.body);
+    const updateFields = (({ name, contact, platform, status, assignedTo, notes, statusNote, active, value, priority }) => ({ name, contact, platform, status, assignedTo, notes, statusNote, active, value, priority }))(req.body);
     const lead = await Lead.findByIdAndUpdate(req.params.id, updateFields, { new: true, runValidators: true });
     if (!lead) return res.status(404).json({ message: 'Lead not found' });
     // Notify assigned user if connected and assignedTo is present
@@ -92,6 +92,8 @@ export const bulkImportLeads = async (req, res) => {
           notes: row.notes || row.Notes,
           statusNote: row.statusNote || row.StatusNote,
           active: row.active !== undefined ? row.active : true,
+          value: row.value || row.Value || 0,
+          priority: row.priority || row.Priority || 'Medium',
         };
         // Only add if name and platform are present
         if (!leadData.name || !leadData.platform) {

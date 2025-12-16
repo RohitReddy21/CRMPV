@@ -6,6 +6,8 @@ const leadSchema = new mongoose.Schema({
   platform: { type: String, enum: ['linkedin', 'meta', 'google', 'website'], required: true },
   status: { type: String, enum: ['new', 'contacted', 'converted', 'lost'], default: 'new' },
   assignedTo: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  value: { type: Number, default: 0 },
+  priority: { type: String, enum: ['High', 'Medium', 'Low'], default: 'Medium' },
   notes: String,
   statusNote: String,
   active: { type: Boolean, default: true },
