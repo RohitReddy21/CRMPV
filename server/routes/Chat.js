@@ -48,6 +48,26 @@ router.post('/groups', authMiddleware, async (req, res) => {
   }
 });
 
+// Update group details
+router.put('/groups/:groupId', authMiddleware, async (req, res) => {
+  try {
+    const { name } = req.body;
+    if (!name) return res.status(400).json({ error: 'Group name is required' });
+
+    // Check if name already exists
+    const existing = await Group.findOne({ name });
+    if (existing && existing._id.toString() !== req.params.groupId) {
+      return res.status(400).json({ error: 'Group name already exists' });
+    }
+
+    const group = await Group.findByIdAndUpdate(req.params.groupId, { name }, { new: true });
+    if (!group) return res.status(404).json({ error: 'Group not found' });
+    res.json(group);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to update group' });
+  }
+});
+
 // Get group chat history
 router.get('/group/:groupId', authMiddleware, async (req, res) => {
   const groupId = req.params.groupId;

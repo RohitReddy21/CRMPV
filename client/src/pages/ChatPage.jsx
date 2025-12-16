@@ -62,6 +62,44 @@ const ChatPage = ({ currentUser }) => {
     }
   }, [selectedChat, isGroup]);
 
+  // Profile Modal State
+  const [showProfileModal, setShowProfileModal] = useState(false);
+  const [profileForm, setProfileForm] = useState({ name: '', email: '' });
+
+  const openProfileModal = () => {
+    setProfileForm({ name: currentUser.name, email: currentUser.email });
+    setShowProfileModal(true);
+  };
+
+  const handleUpdateProfile = async (e) => {
+    e.preventDefault();
+    try {
+      const token = localStorage.getItem('token');
+      // Assuming we can re-use the updateCurrentUser from api.js but calling axios directly for simplicity here or importing it
+      const res = await axios.put(`${BASE_URL}/api/auth/me`, profileForm, { headers: { Authorization: `Bearer ${token}` } });
+      // Update local user if needed, but App.js handles the source of truth usually. 
+      // For now, alert success. Ideally we'd update parent state or reload.
+      localStorage.setItem('user', JSON.stringify(res.data.user));
+      alert('Profile updated successfully! Refresh to see changes.'); // Simple feedback
+      setShowProfileModal(false);
+    } catch (err) {
+      alert('Failed to update profile');
+    }
+  };
+
+  const handleUpdateGroup = async (newName) => {
+    if (!groupToEdit || !newName.trim()) return;
+    try {
+      const token = localStorage.getItem('token');
+      const res = await axios.put(`${BASE_URL}/api/chat/groups/${groupToEdit._id}`, { name: newName }, { headers: { Authorization: `Bearer ${token}` } });
+      setGroups(groups.map(g => g._id === groupToEdit._id ? res.data : g));
+      setGroupToEdit(res.data); // Update modal state
+      alert('Group updated');
+    } catch (err) {
+      alert('Failed to update group');
+    }
+  };
+
   // Open group member modal
   const openGroupModal = (group) => {
     setGroupToEdit(group);
@@ -186,7 +224,12 @@ const ChatPage = ({ currentUser }) => {
     <div className="flex h-[80vh] bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100 max-w-6xl mx-auto mt-6">
       <aside className={`w-full md:w-72 bg-gray-50 border-r border-gray-200 flex flex-col ${selectedChat ? 'hidden md:flex' : 'flex'}`}>
         <div className="p-5 border-b border-gray-200 bg-white">
-          <h2 className="text-xl font-bold text-gray-800">Messages</h2>
+          <div className="flex justify-between items-center">
+            <h2 className="text-xl font-bold text-gray-800">Messages</h2>
+            <button onClick={openProfileModal} className="text-gray-500 hover:text-indigo-600 transition-colors p-2 rounded-full hover:bg-gray-100" title="Edit Profile">
+              ⚙️
+            </button>
+          </div>
           <div className="flex mt-4 gap-2">
             <input
               value={newGroupName}
@@ -333,52 +376,107 @@ const ChatPage = ({ currentUser }) => {
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-fade-in-up">
             <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50">
               <h2 className="text-lg font-bold text-gray-800">Manage Members</h2>
-              <button onClick={() => setShowGroupModal(false)} className="text-gray-400 hover:text-gray-600 text-2xl leading-none">&times;</button>
-            </div>
-
-            <div className="p-6 max-h-[60vh] overflow-y-auto">
-              <div className="space-y-3">
-                {users.map(u => (
-                  <label key={u._id} className="flex items-center justify-between p-3 rounded-xl hover:bg-gray-50 cursor-pointer border border-transparent hover:border-gray-200 transition-all">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-xs">
-                        {getUserInitials(u)}
-                      </div>
-                      <span className="font-medium text-gray-700">{u.name || u.email}</span>
-                    </div>
+              <div className="p-6 max-h-[60vh] overflow-y-auto space-y-6">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1">Group Name</label>
+                  <div className="flex gap-2">
                     <input
-                      type="checkbox"
-                      className="w-5 h-5 text-indigo-600 rounded focus:ring-indigo-500 border-gray-300"
-                      checked={groupMembers.includes(u._id)}
-                      onChange={e => {
-                        if (e.target.checked) setGroupMembers(m => [...m, u._id]);
-                        else setGroupMembers(m => m.filter(id => id !== u._id));
-                      }}
+                      defaultValue={groupToEdit?.name}
+                      id="groupNameInput"
+                      className="flex-1 px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
                     />
-                  </label>
-                ))}
+                    <button
+                      onClick={() => handleUpdateGroup(document.getElementById('groupNameInput').value)}
+                      className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-medium transition"
+                    >
+                      Rename
+                    </button>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Members</label>
+                  <div className="space-y-3">
+                    {users.map(u => (
+                      <label key={u._id} className="flex items-center justify-between p-3 rounded-xl hover:bg-gray-50 cursor-pointer border border-transparent hover:border-gray-200 transition-all">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-xs">
+                            {getUserInitials(u)}
+                          </div>
+                          <span className="font-medium text-gray-700">{u.name || u.email}</span>
+                        </div>
+                        <input
+                          type="checkbox"
+                          className="w-5 h-5 text-indigo-600 rounded focus:ring-indigo-500 border-gray-300"
+                          checked={groupMembers.includes(u._id)}
+                          onChange={e => {
+                            if (e.target.checked) setGroupMembers(m => [...m, u._id]);
+                            else setGroupMembers(m => m.filter(id => id !== u._id));
+                          }}
+                        />
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-6 bg-gray-50 border-t border-gray-100">
+                <button
+                  className="w-full bg-indigo-600 text-white rounded-xl py-3 font-semibold shadow-lg shadow-indigo-200 hover:bg-indigo-700 hover:shadow-xl transition-all disabled:opacity-50"
+                  onClick={handleAddMembers}
+                >
+                  Update Members
+                </button>
               </div>
             </div>
-
-            <div className="p-6 bg-gray-50 border-t border-gray-100">
-              <button
-                className="w-full bg-indigo-600 text-white rounded-xl py-3 font-semibold shadow-lg shadow-indigo-200 hover:bg-indigo-700 hover:shadow-xl transition-all disabled:opacity-50"
-                onClick={handleAddMembers}
-                disabled={groupMembers.length === 0}
-              >
-                Save Changes
-              </button>
-            </div>
           </div>
-        </div>
       )}
-    </div>
-  );
+
+          {/* Profile Edit Modal */}
+          {showProfileModal && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 animate-fade-in">
+              <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden transform transition-all scale-100">
+                <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+                  <h2 className="text-lg font-bold text-gray-800">Edit Profile</h2>
+                  <button onClick={() => setShowProfileModal(false)} className="text-gray-400 hover:text-gray-600 text-2xl leading-none">&times;</button>
+                </div>
+                <form onSubmit={handleUpdateProfile} className="p-6 space-y-4">
+                  <div className="flex justify-center mb-4">
+                    <div className="w-20 h-20 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-2xl font-bold border-4 border-white shadow-lg">
+                      {getUserInitials(currentUser)}
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">Name</label>
+                    <input
+                      value={profileForm.name}
+                      onChange={e => setProfileForm({ ...profileForm, name: e.target.value })}
+                      className="w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1">Email</label>
+                    <input
+                      value={profileForm.email}
+                      onChange={e => setProfileForm({ ...profileForm, email: e.target.value })}
+                      className="w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition"
+                      type="email"
+                    />
+                  </div>
+                  <button type="submit" className="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl hover:bg-indigo-700 transition shadow-lg shadow-indigo-200 mt-4">
+                    Save Profile
+                  </button>
+                </form>
+              </div>
+            </div>
+          )}
+        </div>
+      );
 };
 
-function formatTime(timestamp) {
+      function formatTime(timestamp) {
   if (!timestamp) return '';
-  return new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      return new Date(timestamp).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit' });
 }
 
-export default ChatPage;
+      export default ChatPage;
