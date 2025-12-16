@@ -74,9 +74,9 @@ export default function TasksPage() {
     };
 
     return (
-        <div className="p-8 min-h-full bg-animated">
+        <div className="p-4 md:p-8 min-h-full bg-animated">
             <div className="max-w-5xl mx-auto">
-                <div className="flex justify-between items-center mb-8 glass-panel p-6 rounded-2xl shadow-xl">
+                <div className="flex flex-col md:flex-row justify-between items-center mb-8 glass-panel p-4 md:p-6 rounded-2xl shadow-xl gap-4">
                     <div>
                         <h1 className="text-3xl font-extrabold text-gray-800">Task Manager</h1>
                         <p className="text-gray-500">Coordinate and track team tasks</p>
@@ -104,8 +104,8 @@ export default function TasksPage() {
                             const isCreatedByMe = task.createdBy?._id === currentUser._id;
 
                             return (
-                                <div key={task._id} className={`glass-panel p-6 rounded-2xl shadow-md border-l-4 transition-all hover:translate-x-1 ${task.status === 'Completed' ? 'border-green-500 opacity-75' : 'border-blue-500'}`}>
-                                    <div className="flex justify-between items-start">
+                                <div key={task._id} className={`glass-panel p-4 md:p-6 rounded-2xl shadow-md border-l-4 transition-all hover:translate-x-1 ${task.status === 'Completed' ? 'border-green-500 opacity-75' : 'border-blue-500'}`}>
+                                    <div className="flex flex-col md:flex-row justify-between items-start gap-4">
                                         <div className="flex items-start gap-4">
                                             <button
                                                 onClick={() => handleStatusUpdate(task._id, task.status)}
