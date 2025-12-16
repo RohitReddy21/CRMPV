@@ -7,6 +7,7 @@ import leadsRoutes from './routes/leadsRoutes.js';
 import attendanceRoutes from './routes/attendanceRoutes.js';
 import reportsRoutes from './routes/reportsRoutes.js';
 import chatRoutes from './routes/chatmsg.js'
+import tasksRoutes from './routes/tasksRoutes.js';
 import http from 'http';
 import { Server as SocketIOServer } from 'socket.io';
 import Message from './models/Message.js';
@@ -33,6 +34,7 @@ app.use('/api/leads', leadsRoutes);
 app.use('/api/attendance', attendanceRoutes);
 app.use('/api/reports', reportsRoutes);
 app.use('/api/chat', chatRoutes);
+app.use('/api/tasks', tasksRoutes);
 
 const server = http.createServer(app);
 const io = new SocketIOServer(server, {
@@ -73,8 +75,8 @@ io.on('connection', (socket) => {
     connectedUsers.set(userId, socket.id);
     socket.join(userId); // Join a room for the user
   });
-   // Listen for chat messages
-socket.on('chatMessage', async ({ sender, receiver, content, isGroup }) => {
+  // Listen for chat messages
+  socket.on('chatMessage', async ({ sender, receiver, content, isGroup }) => {
     try {
       // Encrypt message content before saving
       const encryptedContent = encrypt(content);

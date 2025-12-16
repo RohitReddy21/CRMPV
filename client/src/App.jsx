@@ -10,7 +10,9 @@ import ReportsPage from './pages/ReportsPage';
 import AttendanceReport from './pages/AttendanceReport';
 import LeadsReport from './pages/LeadsReport';
 import SalesReport from './pages/SalesReport';
+import SalesReport from './pages/SalesReport';
 import SalesPage from './pages/SalesPage';
+import TasksPage from './pages/TasksPage';
 import Sidebar from './components/Sidebar';
 import { useEffect, useState } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
@@ -106,6 +108,7 @@ function App() {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/leads" element={<LeadsPage />} />
             <Route path="/sales" element={<SalesPage />} />
+            <Route path="/tasks" element={<TasksPage />} />
             <Route path="/attendance" element={<AttendancePage />} />
             <Route path="/chat" element={<ChatPage currentUser={user} />} />
 
