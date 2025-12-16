@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { io } from 'socket.io-client';
 import axios from 'axios';
-const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+import { BASE_URL } from '../api';
 
 const ChatPage = ({ currentUser }) => {
   const [users, setUsers] = useState([]);
