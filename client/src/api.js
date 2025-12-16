@@ -1,6 +1,6 @@
 // api.js
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL.replace(/\/$/, '');
+export const BASE_URL = import.meta.env.VITE_API_BASE_URL.replace(/\/$/, '');
 
 // Helper for API response
 export async function handleApiResponse(response) {
@@ -20,8 +20,8 @@ export async function handleApiResponse(response) {
         if (errorJson?.message) {
           throw new Error(errorJson.message);
         }
-      } catch {}
-    } catch {}
+      } catch { }
+    } catch { }
 
     console.error('HTTP error! status:', response.status, 'Response:', errorText);
     throw new Error('HTTP error! status: ' + response.status + (errorText ? ' Response: ' + errorText : ''));

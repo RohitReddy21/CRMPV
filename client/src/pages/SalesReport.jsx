@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
-import { handleApiResponse } from '../api';
+import { handleApiResponse, BASE_URL } from '../api';
 
 export default function SalesReport() {
   const [range, setRange] = useState('month');
@@ -16,7 +16,7 @@ export default function SalesReport() {
         if (range) params.push(`range=${range}`);
         if (month) params.push(`month=${month}`);
         if (year) params.push(`year=${year}`);
-        const url = `/api/reports/sales${params.length ? '?' + params.join('&') : ''}`;
+        const url = `${BASE_URL}/api/reports/sales${params.length ? '?' + params.join('&') : ''}`;
         const response = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
         const result = await handleApiResponse(response);
         if (result) setData(result);

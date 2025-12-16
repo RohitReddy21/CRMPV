@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend, CartesianGrid } from 'recharts';
-import { handleApiResponse } from '../api';
+import { handleApiResponse, BASE_URL } from '../api';
 
 export default function LeadsReport() {
   const [range, setRange] = useState('month');
@@ -21,7 +21,7 @@ export default function LeadsReport() {
         if (year) params.push(`year=${year}`);
         if (platform) params.push(`platform=${platform}`);
         if (status) params.push(`status=${status}`);
-        const url = `/api/reports/leads${params.length ? '?' + params.join('&') : ''}`;
+        const url = `${BASE_URL}/api/reports/leads${params.length ? '?' + params.join('&') : ''}`;
         const response = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
         const result = await handleApiResponse(response);
         if (result) setData(result);

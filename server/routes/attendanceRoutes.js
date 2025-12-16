@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.post('/clockin', authMiddleware, clockIn);
 router.post('/clockout', authMiddleware, clockOut);
-router.get('/attendance', authMiddleware, getAttendance);
+router.get('/', authMiddleware, getAttendance);
 router.delete('/:id', authMiddleware, deleteAttendance);
 
 export default router; 

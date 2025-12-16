@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend, CartesianGrid } from 'recharts';
-import { handleApiResponse } from '../api';
+import { handleApiResponse, BASE_URL } from '../api';
 
 export default function AttendanceReport() {
   const [range, setRange] = useState('month');
@@ -18,7 +18,7 @@ export default function AttendanceReport() {
         if (range) params.push(`range=${range}`);
         if (month) params.push(`month=${month}`);
         if (year) params.push(`year=${year}`);
-        const url = `/api/reports/attendance${params.length ? '?' + params.join('&') : ''}`;
+        const url = `${BASE_URL}/api/reports/attendance${params.length ? '?' + params.join('&') : ''}`;
         const response = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
         const result = await handleApiResponse(response);
         if (result) {
