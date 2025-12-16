@@ -148,7 +148,7 @@ export default function LeadsPage() {
 
   return (
     <div className="min-h-screen w-full flex flex-col items-center justify-start bg-gradient-to-br from-[#e0e7ff] via-[#f3e8ff] to-[#fff]">
-      <h1 className="text-4xl font-extrabold mb-10 mt-10 text-gray-800 drop-shadow-lg tracking-tight animate-fade-in-down">Leads</h1>
+      <h1 className="text-3xl md:text-4xl font-extrabold mb-10 mt-10 text-gray-800 drop-shadow-lg tracking-tight animate-fade-in-down">Leads</h1>
       <form onSubmit={handleSubmit} className="flex flex-col md:flex-row gap-4 mb-8 w-full max-w-4xl animate-fade-in-up">
         <input name="name" placeholder="Lead Name" value={form.name} onChange={handleChange} required className="input input-bordered px-3 py-2 border rounded-lg w-full shadow focus:ring-2 focus:ring-blue-400 transition-all duration-200" />
         <input name="contact" placeholder="Contact Info" value={form.contact} onChange={handleChange} className="input input-bordered px-3 py-2 border rounded-lg w-full shadow focus:ring-2 focus:ring-blue-400 transition-all duration-200" />

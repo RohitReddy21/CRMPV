@@ -84,7 +84,7 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen w-full flex flex-col items-center justify-start bg-animated p-6">
       <div className="max-w-7xl w-full mt-8 p-8 glass-panel rounded-3xl shadow-2xl">
-        <h1 className="text-5xl font-extrabold mb-12 text-transparent bg-clip-text bg-gradient-to-r from-gray-800 to-gray-600 drop-shadow-sm tracking-tight animate-fade-in-down text-center">
+        <h1 className="text-3xl md:text-5xl font-extrabold mb-12 text-transparent bg-clip-text bg-gradient-to-r from-gray-800 to-gray-600 drop-shadow-sm tracking-tight animate-fade-in-down text-center">
           Admin Dashboard
         </h1>
         {/* Overview Cards */}
