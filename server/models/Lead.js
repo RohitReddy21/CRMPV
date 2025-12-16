@@ -4,7 +4,7 @@ const leadSchema = new mongoose.Schema({
   name: { type: String, required: true },
   contact: String,
   platform: { type: String, enum: ['linkedin', 'meta', 'google', 'website'], required: true },
-  status: { type: String, enum: ['new', 'contacted', 'inprogress', 'converted', 'lost'], default: 'new' },
+  status: { type: String, enum: ['new', 'contacted', 'converted', 'lost'], default: 'new' },
   assignedTo: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   notes: String,
   statusNote: String,

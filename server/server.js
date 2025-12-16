@@ -15,7 +15,7 @@ import Group from './models/Group.js';
 
 // Load environment variables
 dotenv.config();
-console.log('✅ KEY LENGTH:', process.env.MESSAGE_SECRET_KEY.length); // should log 32
+// console.log('✅ KEY LENGTH:', process.env.MESSAGE_SECRET_KEY.length); // should log 32
 
 // ✅ Use 32-byte key (AES-256-CBC)
 
